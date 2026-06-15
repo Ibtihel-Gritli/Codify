@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Apprenez. Codez. Progressez.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar-codify">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a href="index.html" class="logo">
+                <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+                <span class="texte-vert">Codify</span>
+            </a>
+
+            <!-- Boutons -->
+            <div class="d-flex gap-2">
+                <a href="login.html" class="btn-connexion">Connexion</a>
+                <a href="register.html" class="btn-inscrire">S'inscrire</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="section-hero">
+        <!-- Effets de lumière -->
+        <div class="lueur lueur-1"></div>
+        <div class="lueur lueur-2"></div>
+
+        <div style="position: relative; z-index: 1;">
+            <!-- Badge -->
+            <div class="badge-plateforme">
+                <i class="bi bi-stars"></i>
+                Plateforme intelligente d'apprentissage du code
+            </div>
+
+            <!-- Titre -->
+            <h1 class="titre-hero">
+                Apprenez. Codez. <span class="texte-vert">Progressez.</span>
+            </h1>
+
+            <!-- Description -->
+            <p class="description-hero">
+                Codify combine un éditeur de code puissant, une IA pédagogique et des défis
+                interactifs pour vous aider à devenir un meilleur développeur.
+            </p>
+
+            <!-- Boutons -->
+            <div class="boutons-hero">
+                <a href="register.html" class="btn-creer-compte">
+                    <i class="bi bi-chevron-right"></i> Créer un compte
+                </a>
+                <a href="login.html" class="btn-se-connecter">
+                    <i class="bi bi-shield-check"></i> Se connecter
+                </a>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="zone-stats">
+                <div class="text-center">
+                    <div class="stat-valeur texte-vert">5</div>
+                    <div class="stat-label">Langages supportés</div>
+                </div>
+                <div class="text-center">
+                    <div class="stat-valeur texte-vert">200+</div>
+                    <div class="stat-label">Exercices disponibles</div>
+                </div>
+                <div class="text-center">
+                    <div class="stat-valeur texte-vert">5</div>
+                    <div class="stat-label">Niveaux de progression</div>
+                </div>
+                <div class="text-center">
+                    <div class="stat-valeur texte-vert">∞</div>
+                    <div class="stat-label">Défis & Compétitions</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== APERÇU IDE ========== -->
+    <section class="section-ide">
+        <div class="apercu-ide">
+            <!-- Barre titre -->
+            <div class="barre-titre-ide">
+                <div class="point-rouge"></div>
+                <div class="point-jaune"></div>
+                <div class="point-vert-ide"></div>
+                <span class="nom-fichier">main.py — Codify IDE</span>
+            </div>
+
+            <!-- Contenu -->
+            <div class="contenu-ide">
+                <!-- Zone code -->
+                <div class="zone-code-ide">
+                    <div><span class="mot-cle">def</span> <span class="fonction">fibonacci</span>(n):</div>
+                    <div style="margin-left: 20px;"><span class="mot-cle">if</span> n &lt;= <span class="nombre">1</span>:</div>
+                    <div style="margin-left: 40px;"><span class="mot-cle">return</span> n</div>
+                    <div style="margin-left: 20px;"><span class="mot-cle">return</span> <span class="fonction">fibonacci</span>(n-<span class="nombre">1</span>) + <span class="fonction">fibonacci</span>(n-<span class="nombre">2</span>)</div>
+                    <br>
+                    <div><span class="commentaire"># Test</span></div>
+                    <div><span class="mot-cle">print</span>(<span class="fonction">fibonacci</span>(<span class="nombre">10</span>))</div>
+                </div>
+
+                <!-- Panneau IA -->
+                <div class="panneau-ia">
+                    <div class="titre-ia">
+                        <i class="bi bi-robot"></i>
+                        <span>Assistant IA</span>
+                    </div>
+                    <div class="message-ia-carte optimisation">
+                        <div class="titre-message">⚡ Optimisation détectée</div>
+                        <p>Votre version récursive a une complexité O(2ⁿ). Utilisez la mémoïsation pour atteindre O(n).</p>
+                    </div>
+                    <div class="message-ia-carte solution">
+                        <div class="titre-message">💡 Solution optimisée</div>
+                        <p>Utilisez <code>@functools.lru_cache</code> ou une approche itérative.</p>
+                    </div>
+                </div>
+
+                <!-- Terminal -->
+                <div class="terminal-ide">
+                    <span class="terminal-dollar">$</span> <span class="terminal-commande">python main.py</span>
+                    <div class="terminal-resultat">55</div>
+                    <div class="terminal-succes">✓ Exécution réussie en 0.003s</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA ========== -->
+    <section class="section-cta">
+        <div class="carte-cta">
+            <div class="icone-cta"><i class="bi bi-lightning-charge-fill"></i></div>
+            <h2 class="titre-cta">Prêt à <span class="texte-vert">coder</span> ?</h2>
+            <p class="desc-cta">Rejoignez Codify et commencez votre parcours d'apprentissage dès maintenant.</p>
+            <a href="register.html" class="btn-creer-compte" style="display: inline-flex; margin: 0 auto;">
+                <i class="bi bi-chevron-right"></i> Créer un compte
+            </a>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer-codify">
+        <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+            <div class="logo-footer">
+                <div class="icone-logo-petit"><i class="bi bi-code-slash"></i></div>
+                <span class="texte-vert" style="font-weight: 700; font-size: 14px;">Codify</span>
+            </div>
+            <p class="copyright mb-0">© 2026 Codify — Plateforme d'apprentissage de la programmation</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

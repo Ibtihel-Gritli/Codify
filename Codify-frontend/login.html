@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Connexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body class="page-centree">
+
+<div class="carte-login">
+    <div class="logo-login text-center mb-4">
+        <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+        <span class="texte-vert" style="font-weight: 700; font-size: 20px;">Codify</span>
+    </div>
+
+    <p class="sous-titre text-center mb-4">Connectez-vous à votre compte</p>
+
+    <!-- Formulaire Spring Boot -->
+    <form method="POST" action="/login">
+        <!-- Email -->
+        <div class="mb-3">
+            <label class="champ-label">Adresse email</label>
+            <input type="email" name="email" class="champ-input" placeholder="exemple@email.com" required>
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="mb-3">
+            <label class="champ-label">Mot de passe</label>
+            <input type="password" name="password" class="champ-input" placeholder="Votre mot de passe" required>
+        </div>
+
+        <!-- Message d'erreur -->
+        <div class="message-erreur mb-3">
+            <!-- Spring peut injecter un message d'erreur ici -->
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Bouton -->
+        <button type="submit" class="btn-valider mt-2">
+            <i class="bi bi-box-arrow-in-right"></i> Se connecter
+        </button>
+    </form>
+
+    <p class="lien-bas text-center mt-4 mb-0">
+        Pas encore de compte ? <a href="/register">S'inscrire</a>
+    </p>
+</div>
+
+</body>
+</html>

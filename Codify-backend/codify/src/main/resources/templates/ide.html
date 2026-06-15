@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Éditeur de code</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar-ide">
+    <div class="container-fluid d-flex align-items-center justify-content-between px-3">
+        <a href="/" class="d-flex align-items-center gap-2" style="color: var(--texte);">
+            <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+            <span class="texte-vert" style="font-weight: 700; font-size: 16px;">Codify</span>
+        </a>
+        <div class="d-flex gap-2">
+            <a href="/dashboard" class="btn-nav"><i class="bi bi-speedometer2"></i> Dashboard</a>
+			<a href="/defis" class="btn-nav">
+			    <i class="bi bi-trophy"></i> Défis
+			</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-ide">
+    <div class="container-fluid px-3">
+        <div class="row g-3">
+
+            <!-- Zone éditeur -->
+            <div class="col-lg-8">
+                <div class="zone-editeur">
+                    <div class="barre-editeur">
+                        <div class="d-flex gap-2 align-items-center">
+                            <label style="color: var(--texte-gris); font-size: 13px;">Écrire en :</label>
+                            <select id="langage" class="select-langage">
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="c">C</option>
+                            </select>
+                            <label style="color: var(--texte-gris); font-size: 13px;">Transformer vers :</label>
+                            <select id="langageCible" class="select-langage">
+                                <option value="java">Java</option>
+                                <option value="python">Python</option>
+                                <option value="c">C</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn-transformer" onclick="transformer()">
+                                <i class="bi bi-arrow-left-right"></i> Transformer
+                            </button>
+                            <button class="btn-executer" onclick="executer()">
+                                <i class="bi bi-play-fill"></i> Exécuter
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="codeSource" class="zone-code" spellcheck="false"></textarea>
+                </div>
+
+                <div class="mt-3">
+                    <div class="titre-resultat">
+                        <i class="bi bi-terminal"></i> Résultat
+                    </div>
+                    <div id="resultat" class="zone-resultat">En attente d'exécution...</div>
+                </div>
+            </div>
+
+            <!-- Panneau IA -->
+            <div class="col-lg-4">
+                <div class="zone-ia">
+
+                    <!-- Header -->
+                    <div class="titre-ia-header">
+                        <div class="titre-ia-gauche">
+                            <i class="bi bi-robot" style="color:#00b894"></i>
+                            <span>Assistant IA</span>
+                        </div>
+                        <span class="badge-niveau-ia" id="badge-niveau">Débutant</span>
+                    </div>
+
+                    <!-- 4 Onglets -->
+                    <div class="onglets-ia">
+                        <button class="onglet-ia-btn actif" onclick="basculerOngletIA('analyse', this)">
+                            <i class="bi bi-search"></i> Analyse
+                        </button>
+                        <button class="onglet-ia-btn" onclick="basculerOngletIA('optimiser', this)">
+                            <i class="bi bi-lightning"></i> Optimiser
+                        </button>
+                        <button class="onglet-ia-btn" onclick="basculerOngletIA('transformer', this)">
+                            <i class="bi bi-arrow-left-right"></i> Transformer
+                        </button>
+                        <button class="onglet-ia-btn" onclick="basculerOngletIA('chat', this)">
+                            <i class="bi bi-chat"></i> Chat
+                        </button>
+                    </div>
+
+                    <!-- Onglet Analyse -->
+                    <div id="ia-analyse" class="section-ia actif contenu-ia">
+                        <div id="messagesIA">
+                            <div class="carte-ia success">
+                                <div class="carte-ia-titre">
+                                    <i class="bi bi-check-circle"></i> Prêt à analyser
+                                </div>
+                                <div class="carte-ia-desc">Écrivez du code et cliquez sur Exécuter.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Optimiser -->
+                    <div id="ia-optimiser" class="section-ia contenu-ia">
+                        <div id="messagesOptimiser">
+                            <div class="carte-ia info">
+                                <div class="carte-ia-titre">
+                                    <i class="bi bi-lightning"></i> Solution optimisée
+                                </div>
+                                <div class="carte-ia-desc">Exécutez votre code pour voir la version optimisée.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Transformer -->
+                    <div id="ia-transformer" class="section-ia contenu-ia">
+                        <div id="messagesTransformer">
+                            <div class="carte-ia info">
+                                <div class="carte-ia-titre">
+                                    <i class="bi bi-arrow-left-right"></i> Transformation
+                                </div>
+                                <div class="carte-ia-desc">Choisissez un langage cible et cliquez sur Transformer.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Chat IA -->
+                    <div id="ia-chat" class="section-ia contenu-ia">
+                        <div style="text-align:center; padding: 16px 0; color: #94a3b8;">
+                            <i class="bi bi-robot" style="font-size: 32px; color: #334155;"></i>
+                            <div style="font-size: 14px; font-weight: 600; color: white; margin-top: 8px;">
+                                IA adaptée à votre niveau
+                            </div>
+                            <div style="font-size: 12px; margin-top: 4px;">Posez vos questions</div>
+                        </div>
+                        <div class="questions-suggerees">
+                            <button class="question-suggeree" onclick="poserQuestionSuggeree('Explique l erreur dans mon code')">
+                                <i class="bi bi-chat-dots" style="color:#00b894; font-size:14px"></i>
+                                Explique l'erreur dans mon code
+                            </button>
+                            <button class="question-suggeree" onclick="poserQuestionSuggeree('Comment optimiser ce code ?')">
+                                <i class="bi bi-chat-dots" style="color:#00b894; font-size:14px"></i>
+                                Comment optimiser ce code ?
+                            </button>
+                            <button class="question-suggeree" onclick="poserQuestionSuggeree('C est quoi la recursion ?')">
+                                <i class="bi bi-chat-dots" style="color:#00b894; font-size:14px"></i>
+                                C'est quoi la récursion ?
+                            </button>
+                        </div>
+                        <div id="messagesChat" style="margin-top: 8px;"></div>
+                    </div>
+
+                    <!-- Input question -->
+                    <div class="input-ia" style="margin-top: 8px;">
+                        <input type="text" id="questionIA" class="champ-question"
+                            placeholder="Posez une question..."
+                            onkeypress="if(event.key === 'Enter') demanderIA()">
+                        <button class="btn-envoyer" onclick="demanderIA()">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/ide.js"></script>
+<script>
+function basculerOngletIA(onglet, btn) {
+    document.querySelectorAll('.onglet-ia-btn').forEach(b => b.classList.remove('actif'));
+    document.querySelectorAll('.section-ia').forEach(s => s.classList.remove('actif'));
+    document.getElementById('ia-' + onglet).classList.add('actif');
+    btn.classList.add('actif');
+}
+
+function poserQuestionSuggeree(question) {
+    document.getElementById('questionIA').value = question;
+    demanderIA();
+}
+</script>
+</body>
+</html>

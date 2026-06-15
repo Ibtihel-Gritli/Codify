@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar-dashboard">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="/" class="d-flex align-items-center gap-2" style="color: var(--texte);">
+                <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+                <span class="texte-vert" style="font-weight: 700; font-size: 16px;">Codify</span>
+            </a>
+            <div class="d-flex gap-2">
+                <a href="ide.html" class="btn-nav"><i class="bi bi-code-slash"></i> Éditeur</a>
+                <a href="exercices.html" class="btn-nav"><i class="bi bi-journal-code"></i> Exercices</a>
+                <a href="/" class="btn-deconnexion"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== PAGE DASHBOARD ========== -->
+    <div class="page-dashboard">
+        <div class="container">
+
+            <div class="mb-4">
+                <h2 style="font-weight: 700;">
+                    👋 Bonjour, <span class="texte-vert" th:text="${username}">Utilisateur</span> !
+                </h2>
+                <p style="color: var(--texte-gris); font-size: 14px;">Voici votre progression sur Codify.</p>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="carte-stat">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icone-stat bg-vert-stat"><i class="bi bi-star-fill"></i></div>
+                            <div>
+                                <div class="stat-label">Points</div>
+                                <div class="stat-valeur" th:text="${points}">250</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="carte-stat">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icone-stat bg-bleu-stat"><i class="bi bi-check-circle-fill"></i></div>
+                            <div>
+                                <div class="stat-label">Exercices terminés</div>
+                                <div class="stat-valeur">12</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="carte-stat">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icone-stat bg-orange-stat"><i class="bi bi-graph-up"></i></div>
+                            <div>
+                                <div class="stat-label">Niveau</div>
+                                <div class="stat-valeur" th:text="${niveau}" style="font-size: 16px;">Débutant</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="carte-stat">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icone-stat bg-rouge-stat"><i class="bi bi-trophy-fill"></i></div>
+                            <div>
+                                <div class="stat-label">Classement</div>
+                                <div class="stat-valeur">#15</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progression -->
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="carte">
+                        <div class="titre-carte"><i class="bi bi-bar-chart"></i> Progression</div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="niveau-label">🌱 Débutant</span>
+                                <span class="niveau-pourcent">100%</span>
+                            </div>
+                            <div class="barre-conteneur">
+                                <div class="barre-remplissage barre-succes" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="niveau-label">🔥 Intermédiaire</span>
+                                <span class="niveau-pourcent">45%</span>
+                            </div>
+                            <div class="barre-conteneur">
+                                <div class="barre-remplissage barre-warning" style="width: 45%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="niveau-label">🚀 Avancé</span>
+                                <span class="niveau-pourcent">10%</span>
+                            </div>
+                            <div class="barre-conteneur">
+                                <div class="barre-remplissage barre-danger" style="width: 10%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top 5 -->
+                <div class="col-md-4">
+                    <div class="carte">
+                        <div class="titre-carte"><i class="bi bi-trophy"></i> Top 5</div>
+
+                        <table class="table-classement">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>🥇</td><td>Ahmed</td><td class="points-fort">1250</td></tr>
+                                <tr><td>🥈</td><td>Sara</td><td class="points-fort">980</td></tr>
+                                <tr><td>🥉</td><td>Youssef</td><td class="points-fort">870</td></tr>
+                                <tr><td>4</td><td>Fatima</td><td>720</td></tr>
+                                <tr><td>5</td><td>Omar</td><td>650</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activité récente -->
+                <div class="col-12">
+                    <div class="carte">
+                        <div class="titre-carte"><i class="bi bi-clock-history"></i> Activité récente</div>
+
+                        <div class="activite-item">
+                            <span class="activite-texte"><i class="bi bi-check-circle text-success"></i> Exercice "Boucle for" terminé</span>
+                            <span class="badge-points badge-succes">+20 pts</span>
+                        </div>
+                        <div class="activite-item">
+                            <span class="activite-texte"><i class="bi bi-arrow-left-right" style="color: #00d2d3;"></i> Code transformé : Python → Java</span>
+                            <span class="badge-points badge-info">+10 pts</span>
+                        </div>
+                        <div class="activite-item">
+                            <span class="activite-texte"><i class="bi bi-trophy" style="color: #f39c12;"></i> Défi "Tri rapide" complété</span>
+                            <span class="badge-points badge-warning">+50 pts</span>
+                        </div>
+                        <div class="activite-item">
+                            <span class="activite-texte"><i class="bi bi-robot" style="color: #3498db;"></i> Correction IA utilisée</span>
+                            <span class="badge-points badge-primaire">+5 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

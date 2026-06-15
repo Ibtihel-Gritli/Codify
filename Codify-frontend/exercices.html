@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Exercices</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar-exercices">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="index.html" class="d-flex align-items-center gap-2" style="color: var(--texte);">
+                <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+                <span class="texte-vert" style="font-weight: 700; font-size: 16px;">Codify</span>
+            </a>
+            <div class="d-flex gap-2">
+                <a href="ide.html" class="btn-nav"><i class="bi bi-code-slash"></i> Éditeur</a>
+                <a href="dashboard.html" class="btn-nav"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== PAGE EXERCICES ========== -->
+    <div class="page-exercices">
+        <div class="container">
+            <h2 style="font-weight: 700; margin-bottom: 6px;">
+                <i class="bi bi-journal-code" style="color: var(--vert);"></i> Exercices
+            </h2>
+            <p style="color: var(--texte-gris); font-size: 14px; margin-bottom: 24px;">Choisissez un niveau et pratiquez !</p>
+
+            <div class="groupe-filtres">
+                <button class="btn-filtre actif" onclick="filtrer('tous', this)">Tous</button>
+                <button class="btn-filtre" onclick="filtrer('debutant', this)">🌱 Débutant</button>
+                <button class="btn-filtre" onclick="filtrer('intermediaire', this)">🔥 Intermédiaire</button>
+                <button class="btn-filtre" onclick="filtrer('avance', this)">🚀 Avancé</button>
+            </div>
+
+            <div class="row g-3" id="listeExercices"></div>
+        </div>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        var exercices = [
+            { titre: "Variables et types", description: "Apprenez à déclarer des variables et comprendre les types de données.", niveau: "debutant", points: 10, langage: "Python", termine: true },
+            { titre: "Boucle for", description: "Utilisez une boucle for pour parcourir une liste de nombres.", niveau: "debutant", points: 15, langage: "Python", termine: true },
+            { titre: "Conditions if/else", description: "Écrivez un programme qui vérifie si un nombre est pair ou impair.", niveau: "debutant", points: 15, langage: "Python", termine: false },
+            { titre: "Fonctions", description: "Créez une fonction qui calcule la factorielle d'un nombre.", niveau: "debutant", points: 20, langage: "Python", termine: false },
+            { titre: "Listes et tableaux", description: "Manipulez des listes : ajout, suppression, tri et recherche.", niveau: "intermediaire", points: 25, langage: "Python", termine: false },
+            { titre: "Classes et objets", description: "Créez une classe Etudiant avec des attributs et méthodes.", niveau: "intermediaire", points: 30, langage: "Java", termine: false },
+            { titre: "Tri par sélection", description: "Implémentez l'algorithme de tri par sélection.", niveau: "intermediaire", points: 35, langage: "C", termine: false },
+            { titre: "Recherche binaire", description: "Implémentez la recherche binaire dans un tableau trié.", niveau: "avance", points: 40, langage: "C++", termine: false },
+            { titre: "Pile et File", description: "Implémentez une pile (stack) et une file (queue) avec des pointeurs.", niveau: "avance", points: 50, langage: "C", termine: false }
+        ];
+
+        function afficherExercices(liste) {
+            var zone = document.getElementById("listeExercices");
+            zone.innerHTML = "";
+
+            for (var i = 0; i < liste.length; i++) {
+                var ex = liste[i];
+
+                var classeBadge = "badge-debutant";
+                var emojiNiveau = "🌱 debutant";
+                if (ex.niveau === "intermediaire") {
+                    classeBadge = "badge-intermediaire";
+                    emojiNiveau = "🔥 intermédiaire";
+                } else if (ex.niveau === "avance") {
+                    classeBadge = "badge-avance";
+                    emojiNiveau = "🚀 avancé";
+                }
+
+                var statut = ex.termine
+                    ? '<span class="badge-statut badge-termine"><i class="bi bi-check"></i> Terminé</span>'
+                    : '<span class="badge-statut badge-a-faire">À faire</span>';
+
+                var carte = ''
+                    + '<div class="col-md-4 exercice-carte" data-niveau="' + ex.niveau + '">'
+                    + '  <div class="carte-exercice">'
+                    + '    <div class="d-flex justify-content-between">'
+                    + '      <span class="badge-niveau ' + classeBadge + '">' + emojiNiveau + '</span>'
+                    + '      ' + statut
+                    + '    </div>'
+                    + '    <div class="titre-exercice">' + ex.titre + '</div>'
+                    + '    <p class="desc-exercice">' + ex.description + '</p>'
+                    + '    <div class="info-exercice">'
+                    + '      <span class="langage-tag"><i class="bi bi-code-slash"></i> ' + ex.langage + '</span>'
+                    + '      <span class="points-tag"><i class="bi bi-star-fill"></i> ' + ex.points + ' pts</span>'
+                    + '    </div>'
+                    + '    <a href="ide.html" class="btn-commencer">Commencer</a>'
+                    + '  </div>'
+                    + '</div>';
+
+                zone.innerHTML += carte;
+            }
+        }
+
+        function filtrer(niveau, bouton) {
+            var boutons = document.querySelectorAll(".btn-filtre");
+            for (var i = 0; i < boutons.length; i++) {
+                boutons[i].classList.remove("actif");
+            }
+            bouton.classList.add("actif");
+
+            if (niveau === "tous") {
+                afficherExercices(exercices);
+            } else {
+                var filtre = exercices.filter(function(ex) {
+                    return ex.niveau === niveau;
+                });
+                afficherExercices(filtre);
+            }
+        }
+
+        afficherExercices(exercices);
+    </script>
+</body>
+</html>

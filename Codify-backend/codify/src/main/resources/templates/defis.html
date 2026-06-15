@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Hackathons</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar-ide">
+    <div class="container-fluid d-flex align-items-center justify-content-between px-3">
+        <a href="/" class="d-flex align-items-center gap-2" style="color:var(--texte);">
+            <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+            <span class="texte-vert" style="font-weight:700;font-size:16px;">Codify</span>
+        </a>
+        <div class="d-flex gap-2 align-items-center">
+            <span style="color:#00b894;font-size:13px;font-weight:600;">
+                <i class="bi bi-star-fill"></i>
+                <span th:text="${points}">0</span> pts
+            </span>
+            <a href="/exercices" class="btn-nav">
+                <i class="bi bi-journal-code"></i> Exercices
+            </a>
+            <a href="/dashboard" class="btn-nav">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div style="max-width:1100px;margin:0 auto;padding:80px 16px 40px;">
+
+    <!-- En-tête Hackathon -->
+    <div style="margin-bottom:32px;">
+        <h2 style="font-weight:800;color:white;font-size:28px;margin-bottom:6px;">
+            🏆 Hackathons Codify
+        </h2>
+        <p style="color:#94a3b8;font-size:14px;">
+            Affrontez d'autres programmeurs sur de vrais problèmes
+            inspirés de LeetCode, Codeforces et HackerRank.
+        </p>
+    </div>
+
+    <!-- Créer un hackathon -->
+    <div style="background:#1e293b;border-radius:16px;padding:24px;
+                border:1px solid #534AB7;margin-bottom:24px;">
+        <div style="font-weight:700;color:white;font-size:16px;margin-bottom:6px;">
+            <i class="bi bi-lightning-fill" style="color:#534AB7"></i>
+            Créer un nouveau Hackathon
+        </div>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">
+            Un vrai problème algorithmique sera généré automatiquement par l'IA.
+        </p>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+            <div>
+                <label style="color:#94a3b8;font-size:12px;display:block;margin-bottom:4px;">
+                    Langage
+                </label>
+                <select id="langage-defi"
+                    style="background:#0f172a;color:white;border:1px solid #334155;
+                    padding:8px 12px;border-radius:8px;font-size:13px;outline:none;">
+                    <option value="python">🐍 Python</option>
+                    <option value="java">☕ Java</option>
+                    <option value="c">⚙️ C</option>
+                </select>
+            </div>
+            <div>
+                <label style="color:#94a3b8;font-size:12px;display:block;margin-bottom:4px;">
+                    Durée
+                </label>
+                <select id="duree-defi"
+                    style="background:#0f172a;color:white;border:1px solid #334155;
+                    padding:8px 12px;border-radius:8px;font-size:13px;outline:none;">
+                    <option value="5">⚡ 5 min</option>
+                    <option value="10" selected>🔥 10 min</option>
+                    <option value="15">💪 15 min</option>
+                    <option value="30">🏆 30 min</option>
+                </select>
+            </div>
+            <button onclick="creerHackathon()" id="btn-creer"
+                style="background:linear-gradient(135deg,#534AB7,#7c3aed);color:white;
+                border:none;padding:10px 24px;border-radius:8px;font-size:13px;
+                font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                <i class="bi bi-lightning-fill"></i> Lancer le Hackathon
+            </button>
+        </div>
+    </div>
+
+    <!-- Hackathons disponibles (pour rejoindre) -->
+    <div style="margin-bottom:24px;">
+        <div style="font-weight:700;color:white;font-size:16px;margin-bottom:16px;">
+            <i class="bi bi-people" style="color:#f39c12"></i>
+            Hackathons disponibles — Rejoindre
+        </div>
+        <div id="zone-hackathons-attente">
+            <div style="text-align:center;padding:32px;color:#94a3b8;">
+                Chargement...
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ══ ARÈNE HACKATHON ══ -->
+<div id="arene" style="display:none;position:fixed;top:0;left:0;right:0;
+     bottom:0;background:#0f172a;z-index:2000;overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:20px 16px 40px;">
+
+        <!-- Header avec timer et scores -->
+        <div style="display:flex;justify-content:space-between;align-items:center;
+                    margin-bottom:20px;background:#1e293b;border-radius:12px;
+                    padding:16px 20px;border:1px solid #334155;">
+
+            <!-- Infos hackathon -->
+            <div>
+                <div style="font-weight:700;color:white;font-size:16px;">
+                    🏆 Hackathon en cours
+                </div>
+                <div style="color:#94a3b8;font-size:13px;margin-top:2px;">
+                    <span id="info-joueur1" style="color:#00b894;font-weight:600;">--</span>
+                    <span style="margin:0 8px;">⚔️</span>
+                    <span id="info-joueur2" style="color:#e74c3c;font-weight:600;">
+                        En attente...
+                    </span>
+                </div>
+            </div>
+
+            <!-- Compte à rebours -->
+            <div style="text-align:center;background:#0f172a;border-radius:10px;
+                        padding:10px 20px;border:2px solid #e74c3c;">
+                <div style="color:#94a3b8;font-size:11px;">Temps restant</div>
+                <div id="timer-hackathon"
+                     style="color:#e74c3c;font-weight:800;font-size:28px;
+                     font-family:monospace;">10:00</div>
+            </div>
+
+            <!-- Scores en temps réel -->
+            <div style="display:flex;gap:12px;">
+                <div style="text-align:center;background:#0f172a;border-radius:8px;
+                            padding:8px 16px;border:1px solid #334155;">
+                    <div style="color:#94a3b8;font-size:11px;">Mon score</div>
+                    <div id="score-moi"
+                         style="color:#00b894;font-weight:700;font-size:20px;">--</div>
+                </div>
+                <div style="text-align:center;background:#0f172a;border-radius:8px;
+                            padding:8px 16px;border:1px solid #334155;">
+                    <div style="color:#94a3b8;font-size:11px;">Adversaire</div>
+                    <div id="score-adv"
+                         style="color:#e74c3c;font-weight:700;font-size:20px;">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification temps réel -->
+        <div id="notif-live" style="display:none;background:rgba(83,74,183,0.2);
+             border:1px solid #534AB7;border-radius:8px;padding:10px 16px;
+             color:white;font-size:13px;margin-bottom:16px;text-align:center;"></div>
+
+        <!-- Problème du hackathon -->
+        <div style="background:#1e293b;border-radius:12px;padding:20px;
+                    margin-bottom:16px;border-left:4px solid #f39c12;">
+            <div style="font-weight:700;color:#f39c12;margin-bottom:12px;font-size:15px;">
+                📋 Problème du Hackathon
+                <span id="badge-difficulte"
+                      style="background:rgba(243,156,18,0.1);color:#f39c12;
+                      padding:2px 10px;border-radius:10px;font-size:12px;
+                      margin-left:8px;font-weight:600;">Hard</span>
+            </div>
+            <div id="probleme-hackathon"
+                 style="white-space:pre-wrap;color:#e2e8f0;font-size:14px;
+                 line-height:1.8;"></div>
+        </div>
+
+        <!-- Éditeur code -->
+        <div style="margin-bottom:16px;">
+            <label style="color:#94a3b8;font-size:13px;margin-bottom:6px;display:block;">
+                <i class="bi bi-code-slash" style="color:#00b894"></i>
+                Votre solution :
+            </label>
+            <textarea id="code-hackathon"
+                style="width:100%;height:280px;background:#0f172a;color:#e2e8f0;
+                border:1px solid #334155;border-radius:8px;padding:12px;font-size:14px;
+                font-family:monospace;outline:none;resize:vertical;"
+                placeholder="Écrivez votre solution ici..."></textarea>
+        </div>
+
+        <!-- Bouton soumettre -->
+        <button id="btn-soumettre" onclick="soumettreSolution()"
+            style="background:#00b894;color:white;border:none;padding:12px 28px;
+            border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+            display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <i class="bi bi-send"></i> Soumettre ma solution
+        </button>
+
+        <!-- Résultat soumission -->
+        <div id="zone-resultat-hackathon" style="display:none;"></div>
+
+    </div>
+</div>
+
+<!-- ══ MODAL RÉSULTAT FINAL ══ -->
+<div id="modal-final" style="display:none;position:fixed;top:0;left:0;right:0;
+     bottom:0;background:rgba(0,0,0,0.95);z-index:3000;align-items:center;
+     justify-content:center;">
+    <div style="background:#1e293b;border-radius:20px;padding:40px;
+                max-width:600px;width:90%;border:2px solid #534AB7;">
+
+        <!-- Emoji résultat -->
+        <div id="emoji-final" style="font-size:60px;text-align:center;
+             margin-bottom:16px;">🏆</div>
+
+        <!-- Titre -->
+        <div id="titre-final"
+             style="font-weight:800;font-size:24px;color:white;
+             text-align:center;margin-bottom:20px;">Résultat</div>
+
+        <!-- Comparaison scores -->
+        <div id="comparaison-scores"
+             style="display:flex;justify-content:space-around;
+             margin-bottom:24px;"></div>
+
+        <!-- Détails évaluation IA -->
+        <div id="details-eval"
+             style="background:#0f172a;border-radius:10px;padding:16px;
+             margin-bottom:20px;white-space:pre-wrap;color:#94a3b8;
+             font-size:13px;max-height:200px;overflow-y:auto;"></div>
+
+        <div style="text-align:center;">
+            <button onclick="fermerResultatFinal()"
+                style="background:#00b894;color:white;border:none;padding:12px 32px;
+                border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+                Retour aux hackathons
+            </button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+// ── Variables globales ──
+// ── Variables globales ──
+var monUsername   = /*[[${username}]]*/ ''; // Nom de l'utilisateur connecté
+var monNiveau     = /*[[${niveau}]]*/ 'debutant'; // Son niveau
+var hackathonId   = null;   // ID du hackathon en cours
+var tempsDebut    = 0;      // Timestamp de début (reçu du serveur)
+var timerInterval = null;   // Interval du compte à rebours
+var stompClient   = null;   // Client WebSocket
+var soumis        = false;  // A-t-il déjà soumis ?
+
+// ── Au chargement de la page ──
+window.onload = function() {
+    connecterWebSocket();          // Connecter le WebSocket
+    chargerHackathons();           // Charger les hackathons disponibles
+    setInterval(chargerHackathons, 10000); // Auto-refresh toutes les 10s
+};
+
+// ── Connexion WebSocket ──
+function connecterWebSocket() {
+    var socket = new SockJS('/ws-defi');
+    stompClient = Stomp.over(socket);
+    stompClient.debug = null; // Désactiver les logs
+
+    stompClient.connect({}, function() {
+        // S'abonner aux nouveaux hackathons disponibles
+        stompClient.subscribe('/topic/defis', function() {
+            chargerHackathons();
+        });
+    });
+}
+
+// ── S'abonner aux événements d'un hackathon spécifique ──
+function abonnerHackathon(id) {
+    if (!stompClient || !stompClient.connected) return;
+
+    stompClient.subscribe('/topic/defi/' + id, function(msg) {
+        var data = JSON.parse(msg.body);
+        gererEvenement(data); // Traiter l'événement reçu
+    });
+}
+
+// ── Traiter les événements WebSocket du hackathon ──
+function gererEvenement(data) {
+
+    // ── Cas : Le joueur 2 vient de rejoindre ──
+    // Le joueur 1 reçoit ce message pour démarrer son timer
+    if (data.type === 'defi_commence') {
+        document.getElementById('info-joueur1').innerText = data.joueur1;
+        document.getElementById('info-joueur2').innerText = data.joueur2;
+        afficherNotif('⚔️ ' + data.joueur2 + ' a rejoint ! C\'est parti !');
+
+        // Démarrer le timer synchronisé avec le MÊME timestamp que joueur 2
+        demarrerTimerSynchronise(
+            data.dureeMinutes * 60,
+            data.timestampDebut
+        );
+
+    // ── Cas : L'adversaire a soumis une solution ──
+    } else if (data.type === 'solution_soumise') {
+        if (data.joueur !== monUsername) {
+            // Mettre à jour le score de l'adversaire affiché
+            document.getElementById('score-adv').innerText =
+                data.score + '/100';
+            afficherNotif('⚡ ' + data.joueur
+                + ' a soumis ! Score : ' + data.score + '/100');
+        }
+
+    // ── Cas 1 : Un joueur a terminé en premier ──
+    // OU Cas 2 : Les 2 ont soumis
+    // → Arrêt immédiat du timer et affichage du résultat final
+    } else if (data.type === 'defi_termine') {
+        clearInterval(timerInterval); // ← Arrêter le chronomètre immédiatement
+        document.getElementById('timer-hackathon').innerText = '⏹ Terminé';
+        document.getElementById('timer-hackathon').style.color = '#00b894';
+
+        // Afficher le message selon la raison de fin
+        if (data.raison === 'premier_termine') {
+            afficherNotif('🏆 ' + data.gagnant + ' a terminé en premier ! Défi arrêté !');
+        } else {
+            afficherNotif('✅ Les 2 joueurs ont soumis ! Calcul du résultat...');
+        }
+
+        // Afficher le résultat final après 1 seconde
+        setTimeout(function() {
+            afficherResultatFinal(data);
+        }, 1000);
+
+    // ── Cas 3 : Le temps est écoulé pour les 2 ──
+    // → Arrêt automatique et affichage du résultat
+    } else if (data.type === 'temps_ecoule') {
+        clearInterval(timerInterval); // ← Arrêter le chronomètre
+        document.getElementById('timer-hackathon').innerText = '00:00';
+        document.getElementById('timer-hackathon').style.color = '#e74c3c';
+
+        afficherNotif('⏰ Temps écoulé ! Calcul du résultat...');
+
+        // Afficher le résultat final après 1 seconde
+        setTimeout(function() {
+            afficherResultatFinal(data);
+        }, 1000);
+    }
+}
+
+// ── Créer un hackathon ──
+function creerHackathon() {
+    var langage = document.getElementById('langage-defi').value;
+    var duree   = document.getElementById('duree-defi').value;
+    var btn     = document.getElementById('btn-creer');
+
+    btn.disabled = true;
+    btn.innerHTML =
+        '<i class="bi bi-hourglass-split"></i> L\'IA génère le problème...';
+
+    var params = new URLSearchParams();
+    params.append('niveau',       monNiveau);
+    params.append('langage',      langage);
+    params.append('dureeMinutes', duree);
+
+    fetch('/api/defis/creer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML =
+            '<i class="bi bi-lightning-fill"></i> Lancer le Hackathon';
+
+        if (data.erreur) { alert(data.erreur); return; }
+
+        hackathonId = data.defiId;
+
+        // Ouvrir l'arène directement (sans attendre l'adversaire)
+        // Le timer démarrera quand l'adversaire rejoint (via WebSocket)
+        ouvrirArene(
+            data.probleme,
+            monUsername,
+            'En attente...',
+            parseInt(duree)
+        );
+
+        // S'abonner aux événements de ce hackathon
+        abonnerHackathon(hackathonId);
+
+        afficherNotif('✅ Hackathon créé ! En attente d\'un adversaire...');
+        chargerHackathons();
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML =
+            '<i class="bi bi-lightning-fill"></i> Lancer le Hackathon';
+        alert('Erreur lors de la création.');
+    });
+}
+
+// ── Rejoindre un hackathon ──
+function rejoindreHackathon(id) {
+    var params = new URLSearchParams();
+    params.append('defiId', id);
+
+    fetch('/api/defis/rejoindre', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.erreur) { alert(data.erreur); return; }
+
+        hackathonId = id;
+
+        // Ouvrir l'arène avec les 2 joueurs
+        ouvrirArene(
+            data.probleme,
+            data.joueur1,
+            data.joueur2,
+            data.dureeMinutes
+        );
+
+        // S'abonner aux événements
+        abonnerHackathon(id);
+
+        // Démarrer le timer avec le timestamp du SERVEUR
+        // Garantit que joueur 1 et joueur 2 ont exactement le même chronomètre
+        demarrerTimerSynchronise(
+            data.dureeMinutes * 60,
+            data.timestampDebut
+        );
+
+        afficherNotif('⚔️ Hackathon commencé ! Bonne chance !');
+    })
+    .catch(function() { alert('Erreur de connexion.'); });
+}
+
+// ── Ouvrir l'arène ──
+function ouvrirArene(probleme, joueur1, joueur2, dureeMinutes) {
+    // Remplir les infos de l'arène
+    document.getElementById('info-joueur1').innerText  = joueur1;
+    document.getElementById('info-joueur2').innerText  = joueur2;
+    document.getElementById('probleme-hackathon').innerText = probleme;
+    document.getElementById('code-hackathon').value    = '';
+    document.getElementById('zone-resultat-hackathon').style.display = 'none';
+    document.getElementById('notif-live').style.display = 'none';
+    document.getElementById('score-moi').innerText     = '--';
+    document.getElementById('score-adv').innerText     = '--';
+
+    // Afficher la durée initiale dans le timer
+    var m = Math.floor(dureeMinutes).toString().padStart(2,'0');
+    document.getElementById('timer-hackathon').innerText = m + ':00';
+    document.getElementById('timer-hackathon').style.color = '#e74c3c';
+
+    // Afficher l'arène, cacher la page principale
+    document.getElementById('arene').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    // Réinitialiser les variables
+    tempsDebut = Date.now();
+    soumis     = false;
+    document.getElementById('btn-soumettre').disabled  = false;
+    document.getElementById('btn-soumettre').innerHTML =
+        '<i class="bi bi-send"></i> Soumettre ma solution';
+}
+
+// ── Timer synchronisé basé sur le timestamp du serveur ──
+// Les 2 joueurs utilisent le même timestampDebut → même chronomètre
+function demarrerTimerSynchronise(dureeTotaleSecondes, timestampDebut) {
+    clearInterval(timerInterval); // Arrêter l'ancien timer si existant
+
+    timerInterval = setInterval(function() {
+
+        // Calculer le temps écoulé depuis le début du défi
+        var maintenant  = Date.now();
+        var tempsEcoule = Math.floor((maintenant - timestampDebut) / 1000);
+
+        // Calculer le temps restant
+        var tempsRestant = dureeTotaleSecondes - tempsEcoule;
+
+        // Si temps écoulé → terminer automatiquement
+        if (tempsRestant <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('timer-hackathon').innerText = '00:00';
+            tempsEcouleAuto(); // ← Appel automatique au serveur
+            return;
+        }
+
+        // Afficher MM:SS
+        var minutes  = Math.floor(tempsRestant / 60).toString().padStart(2,'0');
+        var secondes = (tempsRestant % 60).toString().padStart(2,'0');
+        document.getElementById('timer-hackathon').innerText =
+            minutes + ':' + secondes;
+
+        // Rouge clignotant si moins de 60 secondes
+        if (tempsRestant <= 60) {
+            var couleur = tempsRestant % 2 === 0 ? '#e74c3c' : '#ff6b6b';
+            document.getElementById('timer-hackathon').style.color = couleur;
+        }
+
+    }, 1000);
+}
+
+// ── Soumettre la solution ──
+function soumettreSolution() {
+    var code = document.getElementById('code-hackathon').value;
+    if (!code.trim()) { alert('Écrivez votre solution !'); return; }
+    if (soumis) { alert('Vous avez déjà soumis !'); return; }
+
+    // Calculer le temps de résolution depuis le début
+    var tempsSecondes = Math.floor((Date.now() - tempsDebut) / 1000);
+    soumis = true;
+
+    var btn = document.getElementById('btn-soumettre');
+    btn.disabled = true;
+    btn.innerHTML =
+        '<i class="bi bi-hourglass-split"></i> Évaluation en cours...';
+
+    var zoneResultat = document.getElementById('zone-resultat-hackathon');
+    zoneResultat.style.display = 'block';
+    zoneResultat.innerHTML =
+        '<div class="carte-ia info" style="text-align:center;padding:16px;">'
+        + '<div class="carte-ia-titre" style="justify-content:center;">'
+        + '⏳ L\'IA évalue votre solution...</div></div>';
+
+    var params = new URLSearchParams();
+    params.append('defiId',       hackathonId);
+    params.append('solution',     code);
+    params.append('tempsSecondes', tempsSecondes);
+
+    fetch('/api/defis/soumettre', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+
+        // Si erreur → réactiver le bouton
+        if (data.erreur) {
+            soumis = false;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-send"></i> Soumettre ma solution';
+            alert(data.erreur);
+            return;
+        }
+
+        var type = data.accepte ? 'success' : 'error';
+        var min  = Math.floor(tempsSecondes / 60);
+        var sec  = tempsSecondes % 60;
+
+        // Afficher le résultat de ma soumission
+        zoneResultat.innerHTML =
+            '<div class="carte-ia ' + type + '">'
+            + '<div class="carte-ia-titre">'
+            + (data.accepte ? '✅ Solution acceptée !' : '⚠️ Solution soumise') + '</div>'
+            + '<div style="display:grid;grid-template-columns:repeat(3,1fr);'
+            + 'gap:12px;margin:12px 0;">'
+
+            // Score
+            + '<div style="text-align:center;">'
+            + '<div style="color:#00b894;font-size:22px;font-weight:700;">'
+            + data.score + '/100</div>'
+            + '<div style="color:#94a3b8;font-size:12px;">Score</div></div>'
+
+            // Temps
+            + '<div style="text-align:center;">'
+            + '<div style="color:#f39c12;font-size:22px;font-weight:700;">'
+            + min + 'min ' + sec + 's</div>'
+            + '<div style="color:#94a3b8;font-size:12px;">Temps</div></div>'
+
+            // Complexité
+            + '<div style="text-align:center;">'
+            + '<div style="color:#9b59b6;font-size:22px;font-weight:700;">'
+            + data.complexite + '</div>'
+            + '<div style="color:#94a3b8;font-size:12px;">Complexité</div></div>'
+
+            + '</div></div>';
+
+        // Mettre à jour mon score affiché
+        document.getElementById('score-moi').innerText = data.score + '/100';
+
+        // Afficher bonus rapidité si applicable
+        if (data.bonusRapidite > 0) {
+            afficherNotif('⚡ Bonus rapidité : +' + data.bonusRapidite + ' points !');
+        }
+
+        // Si le défi est terminé (cas 1 : premier à terminer)
+        // Le résultat final sera géré par le WebSocket (gererEvenement)
+        if (data.defiTermine) {
+            afficherNotif('🏆 Vous avez terminé en premier ! Arrêt du défi...');
+        } else {
+            afficherNotif('✅ Solution soumise ! En attente de l\'adversaire...');
+        }
+    })
+    .catch(function() {
+        soumis = false;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send"></i> Soumettre ma solution';
+        alert('Erreur de connexion.');
+    });
+}
+
+// ── Temps écoulé automatiquement ──
+// Appelé par le timer quand il arrive à 0
+function tempsEcouleAuto() {
+    // Éviter d'appeler plusieurs fois
+    if (!hackathonId) return;
+
+    afficherNotif('⏰ Temps écoulé ! Envoi au serveur...');
+
+    var params = new URLSearchParams();
+    params.append('defiId', hackathonId);
+
+    fetch('/api/defis/temps-ecoule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    });
+    // Le résultat sera reçu via WebSocket (gererEvenement → 'temps_ecoule')
+}
+
+// ── Afficher le résultat final ──
+function afficherResultatFinal(data) {
+    var estGagnant = data.gagnant === monUsername;
+    var egalite    = data.gagnant === 'egalite' || !data.gagnant;
+
+    // Fermer l'arène
+    document.getElementById('arene').style.display = 'none';
+
+    // Ouvrir le modal résultat
+    var modal = document.getElementById('modal-final');
+    modal.style.display = 'flex';
+
+    // Emoji selon résultat
+    document.getElementById('emoji-final').innerText =
+        egalite ? '🤝' : estGagnant ? '🏆' : '😤';
+
+    // Titre coloré selon résultat
+    var titreEl = document.getElementById('titre-final');
+    if (egalite) {
+        titreEl.innerText = 'Égalité !';
+        titreEl.style.color = '#f39c12';
+    } else if (estGagnant) {
+        titreEl.innerText = '🎉 Vous avez gagné !';
+        titreEl.style.color = '#00b894';
+    } else {
+        titreEl.innerText = '😤 ' + data.gagnant + ' a gagné !';
+        titreEl.style.color = '#e74c3c';
+    }
+
+    // Raison de la fin
+    var raisonTexte = '';
+    if (data.raison === 'premier_termine') {
+        raisonTexte = '<div style="color:#f39c12;font-size:13px;'
+            + 'text-align:center;margin-bottom:12px;">'
+            + '⚡ ' + data.gagnant + ' a terminé en premier !</div>';
+    } else if (data.raison === 'temps_ecoule') {
+        raisonTexte = '<div style="color:#e74c3c;font-size:13px;'
+            + 'text-align:center;margin-bottom:12px;">'
+            + '⏰ Temps écoulé !</div>';
+    }
+
+    // Comparaison des scores
+    var s1 = data.scoreJoueur1 || 0;
+    var s2 = data.scoreJoueur2 || 0;
+    document.getElementById('comparaison-scores').innerHTML =
+        raisonTexte
+        + '<div style="display:flex;justify-content:space-around;width:100%;">'
+        + '<div style="text-align:center;">'
+        + '<div style="color:#00b894;font-size:32px;font-weight:800;">'
+        + s1 + '</div>'
+        + '<div style="color:#94a3b8;font-size:14px;">'
+        + (data.joueur1 || '--') + '</div></div>'
+        + '<div style="color:#94a3b8;font-size:24px;align-self:center;">VS</div>'
+        + '<div style="text-align:center;">'
+        + '<div style="color:#e74c3c;font-size:32px;font-weight:800;">'
+        + s2 + '</div>'
+        + '<div style="color:#94a3b8;font-size:14px;">'
+        + (data.joueur2 || '--') + '</div></div>'
+        + '</div>'
+        + (estGagnant
+            ? '<div style="color:#00b894;text-align:center;margin-top:12px;'
+              + 'font-weight:600;">+50 points ajoutés !</div>'
+            : '');
+
+    // Évaluation comparative IA
+    document.getElementById('details-eval').innerText =
+        data.evaluation || 'Évaluation terminée.';
+}
+
+// ── Fermer le résultat final ──
+function fermerResultatFinal() {
+    document.getElementById('modal-final').style.display = 'none';
+    document.body.style.overflow = '';
+    hackathonId = null; // Réinitialiser
+    chargerHackathons();
+}
+
+// ── Charger les hackathons disponibles ──
+function chargerHackathons() {
+    fetch('/api/defis/attente')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        var zone = document.getElementById('zone-hackathons-attente');
+
+        if (!data || data.length === 0) {
+            zone.innerHTML =
+                '<div style="text-align:center;padding:32px;color:#94a3b8;">'
+                + '<i class="bi bi-trophy" style="font-size:32px;color:#334155;'
+                + 'display:block;margin-bottom:8px;"></i>'
+                + 'Aucun hackathon en cours.<br>'
+                + '<span style="font-size:13px;">Créez le premier !</span></div>';
+            return;
+        }
+
+        var html = '<div class="row g-3">';
+        for (var i = 0; i < data.length; i++) {
+            var d      = data[i];
+            var estMoi = d.joueur1 === monUsername;
+
+            html += '<div class="col-md-4">'
+                + '<div style="background:#1e293b;border-radius:12px;padding:20px;'
+                + 'border:2px solid ' + (estMoi ? '#00b894' : '#534AB7') + ';">'
+                + '<div style="display:flex;justify-content:space-between;'
+                + 'align-items:center;margin-bottom:12px;">'
+                + '<span style="font-weight:700;color:white;font-size:15px;">'
+                + '🏆 Hackathon #' + d.id + '</span>'
+                + '<span style="background:rgba(243,156,18,0.1);color:#f39c12;'
+                + 'padding:3px 10px;border-radius:10px;font-size:12px;">'
+                + '⏳ En attente</span></div>'
+                + '<div style="color:#94a3b8;font-size:13px;margin-bottom:10px;">'
+                + '<i class="bi bi-person"></i> ' + d.joueur1 + '</div>'
+                + '<div style="display:flex;gap:8px;margin-bottom:14px;">'
+                + '<span style="background:rgba(0,184,148,0.1);color:#00b894;'
+                + 'padding:3px 8px;border-radius:6px;font-size:12px;">'
+                + d.langage.toUpperCase() + '</span>'
+                + '<span style="background:rgba(52,152,219,0.1);color:#3498db;'
+                + 'padding:3px 8px;border-radius:6px;font-size:12px;">'
+                + d.niveau + '</span>'
+                + '<span style="background:rgba(231,76,60,0.1);color:#e74c3c;'
+                + 'padding:3px 8px;border-radius:6px;font-size:12px;">'
+                + '⏱ ' + d.dureeMinutes + ' min</span></div>'
+                + (estMoi
+                    ? '<div style="text-align:center;color:#94a3b8;font-size:13px;'
+                      + 'padding:8px;background:#0f172a;border-radius:6px;">'
+                      + '⏳ Votre hackathon — En attente...</div>'
+                    : '<button onclick="rejoindreHackathon(' + d.id + ')" '
+                      + 'style="width:100%;background:linear-gradient(135deg,'
+                      + '#534AB7,#7c3aed);color:white;border:none;padding:10px;'
+                      + 'border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">'
+                      + '⚔️ Rejoindre ce Hackathon</button>')
+                + '</div></div>';
+        }
+        html += '</div>';
+        zone.innerHTML = html;
+    })
+    .catch(function() {
+        document.getElementById('zone-hackathons-attente').innerHTML =
+            '<div style="color:#94a3b8;text-align:center;padding:20px;">Erreur</div>';
+    });
+}
+
+// ── Afficher une notification temporaire ──
+function afficherNotif(message) {
+    var notif = document.getElementById('notif-live');
+    notif.innerText = message;
+    notif.style.display = 'block';
+    setTimeout(function() { notif.style.display = 'none'; }, 5000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar-dashboard">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="/" class="d-flex align-items-center gap-2" style="color:var(--texte);">
+            <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+            <span class="texte-vert" style="font-weight:700;font-size:16px;">Codify</span>
+        </a>
+        <div class="d-flex gap-2">
+            <a href="/ide" class="btn-nav"><i class="bi bi-code-slash"></i> Éditeur</a>
+            <a href="/exercices" class="btn-nav"><i class="bi bi-journal-code"></i> Exercices</a>
+            <a href="/logout" class="btn-deconnexion">
+                <i class="bi bi-box-arrow-right"></i> Déconnexion
+            </a>
+			<a href="/defis" class="btn-nav">
+			    <i class="bi bi-trophy"></i> Défis
+			</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-dashboard">
+    <div class="container">
+
+        <!-- Bonjour -->
+        <div class="mb-4">
+            <h2 style="font-weight:700;">
+                👋 Bonjour,
+                <span class="texte-vert" th:text="${username}">Utilisateur</span> !
+            </h2>
+            <p style="color:var(--texte-gris);font-size:14px;">
+                Voici votre progression sur Codify.
+            </p>
+        </div>
+
+        <!-- 4 cartes stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="carte-stat">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icone-stat bg-vert-stat">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Points</div>
+                            <div class="stat-valeur" th:text="${points}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="carte-stat">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icone-stat bg-bleu-stat">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Exercices complétés</div>
+                            <div class="stat-valeur"
+                                 th:text="${exercicesCompletes}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="carte-stat">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icone-stat bg-orange-stat">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Niveau actuel</div>
+                            <div class="stat-valeur"
+                                 th:text="${niveau}"
+                                 style="font-size:16px;">Débutant</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="carte-stat">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icone-stat bg-rouge-stat">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Classement</div>
+                            <div class="stat-valeur"
+                                 id="mon-classement">#--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+
+            <!-- Tableau historique exercices -->
+            <div class="col-md-8">
+                <div class="carte">
+                    <div class="titre-carte">
+                        <i class="bi bi-table"></i> Historique de mes exercices
+                    </div>
+
+                    <div id="zone-historique">
+                        <div th:if="${#lists.isEmpty(historique)}"
+                             style="text-align:center;padding:32px;color:#94a3b8;">
+                            <i class="bi bi-journal-x"
+                               style="font-size:32px;color:#334155;display:block;
+                               margin-bottom:12px;"></i>
+                            Aucun exercice complété pour l'instant.<br>
+                            <a href="/exercices"
+                               style="color:#00b894;font-size:13px;margin-top:8px;
+                               display:inline-block;">
+                                Commencer les exercices →
+                            </a>
+                        </div>
+
+                        <div th:if="${!#lists.isEmpty(historique)}">
+                            <table style="width:100%;border-collapse:collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">#</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Exercice</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Niveau</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Points</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Temps</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Complexité</th>
+                                        <th style="color:#94a3b8;font-size:11px;
+                                            font-weight:600;padding:8px 6px;
+                                            border-bottom:1px solid #334155;">Résultat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="h,stat : ${historique}">
+                                        <td style="padding:10px 6px;font-size:13px;
+                                            color:#94a3b8;border-bottom:1px solid
+                                            rgba(45,51,59,0.5);"
+                                            th:text="${stat.count}">1</td>
+                                        <td style="padding:10px 6px;font-size:13px;
+                                            color:white;border-bottom:1px solid
+                                            rgba(45,51,59,0.5);"
+                                            th:text="${h.titreExercice}">-</td>
+                                        <td style="padding:10px 6px;font-size:12px;
+                                            border-bottom:1px solid rgba(45,51,59,0.5);">
+                                            <span th:text="${h.niveau}"
+                                                  style="background:rgba(0,184,148,0.1);
+                                                  color:#00b894;padding:2px 8px;
+                                                  border-radius:10px;">-</span>
+                                        </td>
+                                        <td style="padding:10px 6px;font-size:13px;
+                                            font-weight:700;color:#00b894;
+                                            border-bottom:1px solid rgba(45,51,59,0.5);"
+                                            th:text="${'+' + h.pointsGagnes + ' pts'}">
+                                            0 pts</td>
+                                        <td style="padding:10px 6px;font-size:13px;
+                                            color:#94a3b8;border-bottom:1px solid
+                                            rgba(45,51,59,0.5);"
+                                            th:text="${h.tempsFormate}">--</td>
+                                        <td style="padding:10px 6px;font-size:13px;
+                                            color:#9b59b6;font-weight:600;
+                                            border-bottom:1px solid rgba(45,51,59,0.5);"
+                                            th:text="${h.complexite}">O(n)</td>
+                                        <td style="padding:10px 6px;border-bottom:1px
+                                            solid rgba(45,51,59,0.5);">
+                                            <span th:if="${h.resultat == 'correct'}"
+                                                  style="background:rgba(0,184,148,0.1);
+                                                  color:#00b894;padding:3px 8px;
+                                                  border-radius:10px;font-size:12px;">
+                                                ✅ Correct</span>
+                                            <span th:if="${h.resultat == 'partiel'}"
+                                                  style="background:rgba(243,156,18,0.1);
+                                                  color:#f39c12;padding:3px 8px;
+                                                  border-radius:10px;font-size:12px;">
+                                                ⚡ Partiel</span>
+                                            <span th:if="${h.resultat == 'incorrect'}"
+                                                  style="background:rgba(231,76,60,0.1);
+                                                  color:#e74c3c;padding:3px 8px;
+                                                  border-radius:10px;font-size:12px;">
+                                                ❌ Incorrect</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 5 classement -->
+            <div class="col-md-4">
+                <div class="carte">
+                    <div class="titre-carte">
+                        <i class="bi bi-trophy"></i> Top 5 — Niveau
+                        <span th:text="${niveau}" style="color:#00b894;
+                            font-size:12px;margin-left:4px;">Débutant</span>
+                    </div>
+                    <div id="top5-zone">
+                        <div style="text-align:center;color:#94a3b8;padding:20px;
+                             font-size:13px;">Chargement...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+var niveauUser = /*[[${niveau}]]*/ 'debutant';
+var usernameUser = /*[[${username}]]*/ '';
+
+window.onload = function() {
+    chargerClassement();
+};
+
+function chargerClassement() {
+    fetch('/api/classement?niveau=' + niveauUser)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        var zone = document.getElementById('top5-zone');
+        if (!data || data.length === 0) {
+            zone.innerHTML = '<div style="text-align:center;color:#94a3b8;'
+                + 'font-size:13px;padding:20px;">Aucun utilisateur</div>';
+            return;
+        }
+
+        var medailles = ['🥇','🥈','🥉'];
+        var html = '<table style="width:100%;border-collapse:collapse;">'
+            + '<thead><tr>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">#</th>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">Nom</th>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">Points</th>'
+            + '</tr></thead><tbody>';
+
+        var monRang = '--';
+        for (var i = 0; i < Math.min(data.length, 5); i++) {
+            var u = data[i];
+            var estMoi = u.username === usernameUser;
+            if (estMoi) monRang = '#' + (i+1);
+
+            html += '<tr style="' + (estMoi
+                ? 'background:rgba(0,184,148,0.1);' : '') + '">'
+                + '<td style="padding:10px 0;font-size:14px;border-bottom:1px solid '
+                + 'rgba(45,51,59,0.5);">' + (i < 3 ? medailles[i] : (i+1)) + '</td>'
+                + '<td style="padding:10px 0;font-size:13px;color:'
+                + (estMoi ? '#00b894' : 'white') + ';font-weight:'
+                + (estMoi ? '700' : '400') + ';border-bottom:1px solid rgba(45,51,59,0.5);">'
+                + u.username + (estMoi ? ' ✓' : '') + '</td>'
+                + '<td style="padding:10px 0;font-size:13px;font-weight:700;'
+                + 'color:#00b894;border-bottom:1px solid rgba(45,51,59,0.5);">'
+                + u.points + '</td>'
+                + '</tr>';
+        }
+
+        html += '</tbody></table>';
+        zone.innerHTML = html;
+
+        // Mettre à jour la carte classement
+        if (monRang !== '--') {
+            document.getElementById('mon-classement').innerText = monRang;
+        }
+    })
+    .catch(function() {
+        document.getElementById('top5-zone').innerHTML =
+            '<div style="color:#94a3b8;font-size:13px;">Erreur classement</div>';
+    });
+}
+</script>
+</body>
+</html>
