@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codify - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar-dashboard">
+    <div class="container d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <div class="icone-logo">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <span class="texte-vert" style="font-weight:700;font-size:16px;">
+                Admin Codify
+            </span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/" class="btn-nav">
+                <i class="bi bi-house"></i> Site
+            </a>
+            <a href="/admin/logout" class="btn-deconnexion">
+                <i class="bi bi-box-arrow-right"></i> Déconnexion
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div style="padding:80px 20px 40px;">
+<div class="container" style="max-width:1100px;">
+
+    <!-- Titre -->
+    <div style="margin-bottom:32px;">
+        <h1 style="font-size:24px;font-weight:800;color:white;">
+            <i class="bi bi-speedometer2" style="color:#00b894"></i>
+            Panneau Administrateur
+        </h1>
+        <p style="color:#94a3b8;font-size:14px;">
+            Gérez les utilisateurs et consultez les statistiques.
+        </p>
+    </div>
+
+    <!-- ── BILAN (statistiques globales) ── -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+                margin-bottom:32px;">
+
+        <!-- Total utilisateurs -->
+        <div style="background:#1e293b;border-radius:12px;padding:20px;
+                    border:1px solid #334155;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;background:rgba(0,184,148,0.1);
+                            border-radius:10px;display:flex;align-items:center;
+                            justify-content:center;font-size:20px;color:#00b894;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <div style="color:#94a3b8;font-size:11px;">Utilisateurs inscrits</div>
+                    <div style="font-size:22px;font-weight:700;color:white;"
+                         th:text="${totalUsers}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total hackathons créés -->
+        <div style="background:#1e293b;border-radius:12px;padding:20px;
+                    border:1px solid #334155;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;background:rgba(83,74,183,0.1);
+                            border-radius:10px;display:flex;align-items:center;
+                            justify-content:center;font-size:20px;color:#534AB7;">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+                <div>
+                    <div style="color:#94a3b8;font-size:11px;">Hackathons créés</div>
+                    <div style="font-size:22px;font-weight:700;color:white;"
+                         th:text="${totalDefis}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hackathons terminés (gains) -->
+        <div style="background:#1e293b;border-radius:12px;padding:20px;
+                    border:1px solid #334155;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;background:rgba(0,184,148,0.1);
+                            border-radius:10px;display:flex;align-items:center;
+                            justify-content:center;font-size:20px;color:#00b894;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div>
+                    <div style="color:#94a3b8;font-size:11px;">Hackathons terminés</div>
+                    <div style="font-size:22px;font-weight:700;color:#00b894;"
+                         th:text="${defisTermines}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hackathons en attente (pertes) -->
+        <div style="background:#1e293b;border-radius:12px;padding:20px;
+                    border:1px solid #334155;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;background:rgba(231,76,60,0.1);
+                            border-radius:10px;display:flex;align-items:center;
+                            justify-content:center;font-size:20px;color:#e74c3c;">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div>
+                    <div style="color:#94a3b8;font-size:11px;">En attente / abandonnés</div>
+                    <div style="font-size:22px;font-weight:700;color:#e74c3c;"
+                         th:text="${totalDefis - defisTermines}">0</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── 3 TABLEAUX DE CLASSEMENT ── -->
+    <div class="row g-3 mb-4">
+
+        <!-- Classement Débutants -->
+        <div class="col-md-4">
+            <div style="background:#1e293b;border-radius:12px;padding:20px;
+                        border:1px solid #334155;height:100%;">
+                <div style="font-weight:700;color:#00b894;font-size:15px;
+                             margin-bottom:16px;">
+                    🌱 Classement Débutants
+                </div>
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">#</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Nom</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(debutants)}">
+                            <td colspan="3" style="padding:16px;text-align:center;
+                                color:#94a3b8;font-size:13px;">Aucun</td>
+                        </tr>
+                        <tr th:each="u,stat : ${debutants}">
+                            <td style="padding:8px 0;font-size:13px;border-bottom:
+                                1px solid rgba(45,51,59,0.5);"
+                                th:text="${stat.index == 0 ? '🥇' : stat.index == 1 ? '🥈' : stat.index == 2 ? '🥉' : stat.count}">1</td>
+                            <td style="padding:8px 0;font-size:13px;color:white;
+                                border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.username}">-</td>
+                            <td style="padding:8px 0;font-size:13px;font-weight:700;
+                                color:#00b894;border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.points + ' pts'}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Classement Intermédiaires -->
+        <div class="col-md-4">
+            <div style="background:#1e293b;border-radius:12px;padding:20px;
+                        border:1px solid #334155;height:100%;">
+                <div style="font-weight:700;color:#f39c12;font-size:15px;
+                             margin-bottom:16px;">
+                    ⚡ Classement Intermédiaires
+                </div>
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">#</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Nom</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(intermediaires)}">
+                            <td colspan="3" style="padding:16px;text-align:center;
+                                color:#94a3b8;font-size:13px;">Aucun</td>
+                        </tr>
+                        <tr th:each="u,stat : ${intermediaires}">
+                            <td style="padding:8px 0;font-size:13px;border-bottom:
+                                1px solid rgba(45,51,59,0.5);"
+                                th:text="${stat.index == 0 ? '🥇' : stat.index == 1 ? '🥈' : stat.index == 2 ? '🥉' : stat.count}">1</td>
+                            <td style="padding:8px 0;font-size:13px;color:white;
+                                border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.username}">-</td>
+                            <td style="padding:8px 0;font-size:13px;font-weight:700;
+                                color:#f39c12;border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.points + ' pts'}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Classement Avancés -->
+        <div class="col-md-4">
+            <div style="background:#1e293b;border-radius:12px;padding:20px;
+                        border:1px solid #334155;height:100%;">
+                <div style="font-weight:700;color:#e74c3c;font-size:15px;
+                             margin-bottom:16px;">
+                    🚀 Classement Avancés
+                </div>
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">#</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Nom</th>
+                            <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                                padding:6px 0;border-bottom:1px solid #334155;">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(avances)}">
+                            <td colspan="3" style="padding:16px;text-align:center;
+                                color:#94a3b8;font-size:13px;">Aucun</td>
+                        </tr>
+                        <tr th:each="u,stat : ${avances}">
+                            <td style="padding:8px 0;font-size:13px;border-bottom:
+                                1px solid rgba(45,51,59,0.5);"
+                                th:text="${stat.index == 0 ? '🥇' : stat.index == 1 ? '🥈' : stat.index == 2 ? '🥉' : stat.count}">1</td>
+                            <td style="padding:8px 0;font-size:13px;color:white;
+                                border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.username}">-</td>
+                            <td style="padding:8px 0;font-size:13px;font-weight:700;
+                                color:#e74c3c;border-bottom:1px solid rgba(45,51,59,0.5);"
+                                th:text="${u.points + ' pts'}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── LISTE COMPLÈTE DES UTILISATEURS ── -->
+    <div style="background:#1e293b;border-radius:12px;padding:20px;
+                border:1px solid #334155;">
+        <div style="font-weight:700;color:white;font-size:16px;margin-bottom:16px;">
+            <i class="bi bi-people-fill" style="color:#00b894"></i>
+            Tous les utilisateurs
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">#</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Nom</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Email</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Niveau</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Points</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Exercices</th>
+                    <th style="color:#94a3b8;font-size:11px;font-weight:600;
+                        padding:8px 6px;border-bottom:1px solid #334155;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(tousUsers)}">
+                    <td colspan="7" style="padding:24px;text-align:center;
+                        color:#94a3b8;font-size:13px;">Aucun utilisateur</td>
+                </tr>
+                <tr th:each="u,stat : ${tousUsers}">
+                    <td style="padding:10px 6px;font-size:13px;color:#94a3b8;
+                        border-bottom:1px solid rgba(45,51,59,0.5);"
+                        th:text="${stat.count}">1</td>
+                    <td style="padding:10px 6px;font-size:13px;color:white;
+                        border-bottom:1px solid rgba(45,51,59,0.5);"
+                        th:text="${u.username}">-</td>
+                    <td style="padding:10px 6px;font-size:12px;color:#94a3b8;
+                        border-bottom:1px solid rgba(45,51,59,0.5);"
+                        th:text="${u.email}">-</td>
+                    <td style="padding:10px 6px;border-bottom:1px solid rgba(45,51,59,0.5);">
+                        <span th:text="${u.level}"
+                              style="background:rgba(0,184,148,0.1);color:#00b894;
+                              padding:2px 8px;border-radius:10px;font-size:12px;">-</span>
+                    </td>
+                    <td style="padding:10px 6px;font-size:13px;font-weight:700;
+                        color:#00b894;border-bottom:1px solid rgba(45,51,59,0.5);"
+                        th:text="${u.points + ' pts'}">0</td>
+                    <td style="padding:10px 6px;font-size:13px;color:#94a3b8;
+                        border-bottom:1px solid rgba(45,51,59,0.5);"
+                        th:text="${u.exercicesCompletes}">0</td>
+                    <td style="padding:10px 6px;border-bottom:1px solid rgba(45,51,59,0.5);">
+                        <form method="POST"
+                              th:action="@{/admin/supprimer/{id}(id=${u.id})}"
+                              onsubmit="return confirm('Supprimer cet utilisateur ?')">
+                            <button type="submit"
+                                style="background:rgba(231,76,60,0.1);color:#e74c3c;
+                                border:1px solid rgba(231,76,60,0.3);padding:4px 10px;
+                                border-radius:6px;font-size:12px;cursor:pointer;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+</body>
+</html>

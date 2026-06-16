@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,113 +10,788 @@
 </head>
 <body>
 
-    <!-- ========== NAVBAR ========== -->
-    <nav class="navbar-exercices">
-        <div class="container d-flex align-items-center justify-content-between">
-            <a href="index.html" class="d-flex align-items-center gap-2" style="color: var(--texte);">
-                <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
-                <span class="texte-vert" style="font-weight: 700; font-size: 16px;">Codify</span>
-            </a>
-            <div class="d-flex gap-2">
-                <a href="ide.html" class="btn-nav"><i class="bi bi-code-slash"></i> Éditeur</a>
-                <a href="dashboard.html" class="btn-nav"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            </div>
+<nav class="navbar-ide">
+    <div class="container-fluid d-flex align-items-center justify-content-between px-3">
+        <a href="/" class="d-flex align-items-center gap-2" style="color:var(--texte);">
+            <div class="icone-logo"><i class="bi bi-code-slash"></i></div>
+            <span class="texte-vert" style="font-weight:700;font-size:16px;">Codify</span>
+        </a>
+        <div class="d-flex gap-2 align-items-center">
+            <span style="color:#00b894;font-size:13px;font-weight:600;">
+                <i class="bi bi-star-fill"></i>
+                <span id="total-points" th:text="${points}">0</span> pts
+            </span>
+            <span style="color:#94a3b8;font-size:13px;">
+                <i class="bi bi-check-circle"></i>
+                <span id="exo-count" th:text="${exercicesCompletes}">0</span>/20
+            </span>
+            <a href="ide.html" class="btn-nav"><i class="bi bi-code-slash"></i> Éditeur</a>
+            <a href="dashboard.html" class="btn-nav"><i class="bi bi-speedometer2"></i> Dashboard</a>
+			<a href="defis.html" class="btn-nav">
+			    <i class="bi bi-trophy"></i> Défis
+			</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- ========== PAGE EXERCICES ========== -->
-    <div class="page-exercices">
-        <div class="container">
-            <h2 style="font-weight: 700; margin-bottom: 6px;">
-                <i class="bi bi-journal-code" style="color: var(--vert);"></i> Exercices
-            </h2>
-            <p style="color: var(--texte-gris); font-size: 14px; margin-bottom: 24px;">Choisissez un niveau et pratiquez !</p>
+<div style="max-width:1100px;margin:0 auto;padding:80px 16px 40px;">
 
-            <div class="groupe-filtres">
-                <button class="btn-filtre actif" onclick="filtrer('tous', this)">Tous</button>
-                <button class="btn-filtre" onclick="filtrer('debutant', this)">🌱 Débutant</button>
-                <button class="btn-filtre" onclick="filtrer('intermediaire', this)">🔥 Intermédiaire</button>
-                <button class="btn-filtre" onclick="filtrer('avance', this)">🚀 Avancé</button>
+    <!-- ── En-tête ── -->
+    <div style="margin-bottom:28px;">
+        <h2 style="font-weight:800;color:white;font-size:28px;margin-bottom:6px;">
+            <i class="bi bi-journal-code" style="color:#00b894"></i> Mes Exercices
+        </h2>
+        <p style="color:#94a3b8;font-size:14px;">
+            Bonjour <strong th:text="${username}" style="color:white">Utilisateur</strong> !
+            Exercices adaptés à votre niveau.
+        </p>
+
+        <!-- Barre de progression vers le test -->
+        <div style="margin-top:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="color:#94a3b8;font-size:13px;">
+                    Progression vers le test de niveau
+                </span>
+                <span style="color:#00b894;font-size:13px;font-weight:600;">
+                    <span id="prog-count" th:text="${exercicesCompletes}">0</span>/20 exercices
+                </span>
             </div>
-
-            <div class="row g-3" id="listeExercices"></div>
+            <div style="background:#1e293b;border-radius:10px;height:8px;overflow:hidden;">
+                <div id="barre-prog" style="height:100%;background:#00b894;border-radius:10px;
+                     transition:width 0.5s;"
+                     th:style="'width:' + ${exercicesCompletes * 5} + '%'"></div>
+            </div>
         </div>
     </div>
 
-    <!-- ========== JAVASCRIPT ========== -->
-    <script>
-        var exercices = [
-            { titre: "Variables et types", description: "Apprenez à déclarer des variables et comprendre les types de données.", niveau: "debutant", points: 10, langage: "Python", termine: true },
-            { titre: "Boucle for", description: "Utilisez une boucle for pour parcourir une liste de nombres.", niveau: "debutant", points: 15, langage: "Python", termine: true },
-            { titre: "Conditions if/else", description: "Écrivez un programme qui vérifie si un nombre est pair ou impair.", niveau: "debutant", points: 15, langage: "Python", termine: false },
-            { titre: "Fonctions", description: "Créez une fonction qui calcule la factorielle d'un nombre.", niveau: "debutant", points: 20, langage: "Python", termine: false },
-            { titre: "Listes et tableaux", description: "Manipulez des listes : ajout, suppression, tri et recherche.", niveau: "intermediaire", points: 25, langage: "Python", termine: false },
-            { titre: "Classes et objets", description: "Créez une classe Etudiant avec des attributs et méthodes.", niveau: "intermediaire", points: 30, langage: "Java", termine: false },
-            { titre: "Tri par sélection", description: "Implémentez l'algorithme de tri par sélection.", niveau: "intermediaire", points: 35, langage: "C", termine: false },
-            { titre: "Recherche binaire", description: "Implémentez la recherche binaire dans un tableau trié.", niveau: "avance", points: 40, langage: "C++", termine: false },
-            { titre: "Pile et File", description: "Implémentez une pile (stack) et une file (queue) avec des pointeurs.", niveau: "avance", points: 50, langage: "C", termine: false }
-        ];
+    <!-- ── Sélection langage ── -->
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+        <label style="color:#94a3b8;font-size:13px;font-weight:600;">Langage :</label>
+        <div style="display:flex;gap:8px;">
+            <button onclick="changerLangage('python', this)"
+                id="btn-python"
+                style="padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;
+                cursor:pointer;border:2px solid #00b894;background:rgba(0,184,148,0.1);
+                color:#00b894;transition:all 0.2s;">
+                🐍 Python
+            </button>
+            <button onclick="changerLangage('java', this)"
+                id="btn-java"
+                style="padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;
+                cursor:pointer;border:2px solid #334155;background:transparent;
+                color:#94a3b8;transition:all 0.2s;">
+                ☕ Java
+            </button>
+            <button onclick="changerLangage('c', this)"
+                id="btn-c"
+                style="padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;
+                cursor:pointer;border:2px solid #334155;background:transparent;
+                color:#94a3b8;transition:all 0.2s;">
+                ⚙️ C
+            </button>
+        </div>
+    </div>
 
-        function afficherExercices(liste) {
-            var zone = document.getElementById("listeExercices");
-            zone.innerHTML = "";
+    <!-- ── 6 Cartes exercices IA ── -->
+    <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#94a3b8;font-size:13px;">
+            <i class="bi bi-stars" style="color:#00b894"></i>
+            Exercices générés par l'IA — adaptés à votre niveau
+        </span>
+        <button onclick="rechargerExercices()"
+            style="background:transparent;border:1px solid #334155;color:#94a3b8;
+            padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;">
+            <i class="bi bi-arrow-clockwise"></i> Nouveaux exercices
+        </button>
+    </div>
 
-            for (var i = 0; i < liste.length; i++) {
-                var ex = liste[i];
+    <div class="row g-3" id="zone-exercices">
+        <div class="col-12" style="text-align:center;padding:40px;">
+            <i class="bi bi-hourglass-split" style="font-size:24px;color:#3498db"></i>
+            <div style="color:#94a3b8;margin-top:8px;">Chargement des exercices...</div>
+        </div>
+    </div>
 
-                var classeBadge = "badge-debutant";
-                var emojiNiveau = "🌱 debutant";
-                if (ex.niveau === "intermediaire") {
-                    classeBadge = "badge-intermediaire";
-                    emojiNiveau = "🔥 intermédiaire";
-                } else if (ex.niveau === "avance") {
-                    classeBadge = "badge-avance";
-                    emojiNiveau = "🚀 avancé";
-                }
+    <!-- ── Séparateur classement ── -->
+    <div style="display:flex;align-items:center;gap:12px;margin:36px 0 20px;">
+        <div style="flex:1;height:1px;background:#334155;"></div>
+        <span style="color:#94a3b8;font-size:13px;white-space:nowrap;">
+            <i class="bi bi-trophy" style="color:#f39c12"></i>
+            Classement — votre niveau
+        </span>
+        <div style="flex:1;height:1px;background:#334155;"></div>
+    </div>
 
-                var statut = ex.termine
-                    ? '<span class="badge-statut badge-termine"><i class="bi bi-check"></i> Terminé</span>'
-                    : '<span class="badge-statut badge-a-faire">À faire</span>';
+    <!-- ── Classement ── -->
+    <div id="zone-classement" style="background:#1e293b;border-radius:12px;
+         padding:20px;border:1px solid #334155;margin-bottom:24px;">
+        <div style="color:#94a3b8;text-align:center;">Chargement du classement...</div>
+    </div>
 
-                var carte = ''
-                    + '<div class="col-md-4 exercice-carte" data-niveau="' + ex.niveau + '">'
-                    + '  <div class="carte-exercice">'
-                    + '    <div class="d-flex justify-content-between">'
-                    + '      <span class="badge-niveau ' + classeBadge + '">' + emojiNiveau + '</span>'
-                    + '      ' + statut
-                    + '    </div>'
-                    + '    <div class="titre-exercice">' + ex.titre + '</div>'
-                    + '    <p class="desc-exercice">' + ex.description + '</p>'
-                    + '    <div class="info-exercice">'
-                    + '      <span class="langage-tag"><i class="bi bi-code-slash"></i> ' + ex.langage + '</span>'
-                    + '      <span class="points-tag"><i class="bi bi-star-fill"></i> ' + ex.points + ' pts</span>'
-                    + '    </div>'
-                    + '    <a href="ide.html" class="btn-commencer">Commencer</a>'
-                    + '  </div>'
-                    + '</div>';
+    <!-- ── Bouton Test (désactivé si < 20 exercices) ── -->
+    <div style="text-align:center;margin:32px 0;">
+        <div id="zone-test-btn">
+            <div th:if="${!testDisponible}"
+                style="background:#1e293b;border-radius:12px;padding:24px;
+                border:1px dashed #334155;text-align:center;">
+                <i class="bi bi-lock" style="font-size:24px;color:#94a3b8"></i>
+                <div style="color:white;font-weight:700;margin-top:8px;font-size:16px;">
+                    Test de niveau verrouillé
+                </div>
+                <div style="color:#94a3b8;font-size:13px;margin-top:4px;">
+                    Complétez <strong style="color:#00b894;"
+                    th:text="${20 - exercicesCompletes}">20</strong>
+                    exercices supplémentaires pour débloquer le test
+                </div>
+            </div>
+            <div th:if="${testDisponible}" style="text-align:center;">
+                <button onclick="ouvrirTest()"
+                    style="background:linear-gradient(135deg,#534AB7,#7c3aed);
+                    color:white;border:none;padding:14px 40px;border-radius:12px;
+                    font-size:16px;font-weight:700;cursor:pointer;
+                    box-shadow:0 0 30px rgba(83,74,183,0.4);">
+                    <i class="bi bi-clipboard-check"></i>
+                    🎯 Passer le Test de Niveau
+                </button>
+                <div style="color:#94a3b8;font-size:12px;margin-top:8px;">
+                    Test chronométré — Très difficile — Sans points
+                </div>
+            </div>
+        </div>
+    </div>
 
-                zone.innerHTML += carte;
-            }
+</div>
+
+<!-- ══ MODAL EXERCICE ══ -->
+<div id="modal-exercice" style="display:none;position:fixed;top:0;left:0;right:0;
+     bottom:0;background:rgba(0,0,0,0.85);z-index:1000;overflow-y:auto;">
+    <div style="max-width:800px;margin:40px auto;padding:0 16px 40px;">
+        <div style="background:#1e293b;border-radius:16px;padding:24px;border:1px solid #334155;">
+
+            <!-- Header modal -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <div>
+                    <div id="modal-titre" style="font-weight:700;color:white;font-size:18px;"></div>
+                    <div id="modal-langage" style="color:#94a3b8;font-size:13px;margin-top:2px;"></div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <!-- Timer -->
+                    <div style="background:#0f172a;border-radius:8px;padding:8px 14px;
+                         display:flex;align-items:center;gap:6px;">
+                        <i class="bi bi-clock" style="color:#00b894;font-size:14px"></i>
+                        <span id="timer" style="color:#00b894;font-weight:700;font-size:16px;
+                              font-family:monospace;">00:00</span>
+                    </div>
+                    <button onclick="fermerModal()"
+                        style="background:#334155;border:none;color:#94a3b8;
+                        width:32px;height:32px;border-radius:8px;cursor:pointer;
+                        font-size:16px;">✕</button>
+                </div>
+            </div>
+
+            <!-- Énoncé exercice -->
+            <div id="modal-enonce" style="background:#0f172a;border-radius:10px;
+                 padding:16px;margin-bottom:16px;color:#e2e8f0;font-size:14px;
+                 line-height:1.7;white-space:pre-wrap;border-left:4px solid #00b894;"></div>
+
+            <!-- Éditeur code -->
+            <div style="margin-bottom:16px;">
+                <label style="color:#94a3b8;font-size:13px;margin-bottom:6px;display:block;">
+                    <i class="bi bi-code-slash"></i> Votre solution :
+                </label>
+                <textarea id="modal-code" style="width:100%;height:200px;background:#0f172a;
+                          color:#e2e8f0;border:1px solid #334155;border-radius:8px;
+                          padding:12px;font-size:14px;font-family:monospace;
+                          outline:none;resize:vertical;"
+                          placeholder="Écrivez votre solution ici..."></textarea>
+            </div>
+
+            <!-- Bouton corriger -->
+            <button id="btn-corriger" onclick="corrigerExercice()"
+                style="background:#00b894;color:white;border:none;padding:10px 24px;
+                border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+                display:flex;align-items:center;gap:6px;margin-bottom:16px;">
+                <i class="bi bi-check-circle"></i> Corriger ma solution
+            </button>
+
+            <!-- Zone correction -->
+            <div id="zone-correction" style="display:none;">
+                <div id="contenu-correction" style="margin-bottom:16px;"></div>
+
+                <!-- Stats de l'exercice -->
+                <div id="stats-exercice" style="display:none;background:#0f172a;
+                     border-radius:10px;padding:16px;margin-bottom:16px;">
+                    <div style="font-weight:700;color:white;margin-bottom:12px;">
+                        📊 Statistiques
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                        <div style="text-align:center;">
+                            <div style="color:#00b894;font-size:22px;font-weight:700;"
+                                id="stat-temps">--</div>
+                            <div style="color:#94a3b8;font-size:12px;">Temps</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="color:#f39c12;font-size:22px;font-weight:700;"
+                                id="stat-points">--</div>
+                            <div style="color:#94a3b8;font-size:12px;">Points gagnés</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="color:#9b59b6;font-size:22px;font-weight:700;"
+                                id="stat-complexite">--</div>
+                            <div style="color:#94a3b8;font-size:12px;">Complexité</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone questions après correction -->
+                <div style="border-top:1px solid #334155;padding-top:16px;">
+                    <div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">
+                        <i class="bi bi-chat-dots" style="color:#00b894"></i>
+                        Vous avez des questions sur cet exercice ?
+                    </div>
+                    <div id="messages-questions" style="margin-bottom:8px;"></div>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="question-input"
+                            style="flex:1;background:#0f172a;border:1px solid #334155;
+                            border-radius:8px;padding:8px 12px;color:white;
+                            font-size:13px;outline:none;"
+                            placeholder="Posez une question sur cet exercice..."
+                            onkeypress="if(event.key==='Enter') poserQuestion()">
+                        <button onclick="poserQuestion()"
+                            style="background:#00b894;color:white;border:none;
+                            padding:8px 14px;border-radius:8px;cursor:pointer;">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ══ MODAL TEST ══ -->
+<div id="modal-test" style="display:none;position:fixed;top:0;left:0;right:0;
+     bottom:0;background:rgba(0,0,0,0.9);z-index:1000;overflow-y:auto;">
+    <div style="max-width:800px;margin:40px auto;padding:0 16px 40px;">
+        <div style="background:#1e293b;border-radius:16px;padding:24px;border:1px solid #534AB7;">
+
+            <!-- Header test -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <div>
+                    <div style="font-weight:700;color:white;font-size:18px;">
+                        🎯 Test de Niveau
+                    </div>
+                    <div style="color:#94a3b8;font-size:13px;">
+                        Test très difficile — Réussir pour passer au niveau supérieur
+                    </div>
+                </div>
+                <!-- Compte à rebours test -->
+                <div style="background:#0f172a;border-radius:8px;padding:10px 16px;
+                     border:1px solid rgba(83,74,183,0.4);text-align:center;">
+                    <div style="color:#94a3b8;font-size:11px;">Temps restant</div>
+                    <div id="timer-test" style="color:#e74c3c;font-weight:700;
+                         font-size:22px;font-family:monospace;">30:00</div>
+                </div>
+            </div>
+
+            <!-- Contenu test -->
+            <div id="contenu-test" style="margin-bottom:16px;"></div>
+
+            <!-- Réponses test -->
+            <div>
+                <label style="color:#94a3b8;font-size:13px;margin-bottom:6px;display:block;">
+                    Vos réponses (numérotez chaque réponse) :
+                </label>
+                <textarea id="reponses-test" style="width:100%;height:250px;
+                          background:#0f172a;color:white;border:1px solid #334155;
+                          border-radius:8px;padding:12px;font-size:13px;
+                          font-family:monospace;outline:none;resize:vertical;"
+                          placeholder="Q1: ...&#10;Q2: ...&#10;Q3: ..."></textarea>
+            </div>
+
+            <button onclick="soumettreTest(false)"
+                style="margin-top:12px;background:#534AB7;color:white;border:none;
+                padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;
+                cursor:pointer;display:flex;align-items:center;gap:8px;">
+                <i class="bi bi-send"></i> Soumettre le test
+            </button>
+
+            <div id="resultat-test" style="margin-top:20px;"></div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+var niveauUser  = /*[[${niveau}]]*/ 'debutant';
+var pointsUser  = /*[[${points}]]*/ 0;
+var exoCompletes = /*[[${exercicesCompletes}]]*/ 0;
+var langageActuel = 'python';
+var exerciceEnCours = '';
+var tempsDebut = 0;
+var intervalTimer = null;
+var intervalTest = null;
+var testEnCours = '';
+var dureeTestSecondes = 1800;
+
+// ── Au chargement ──
+window.onload = function() {
+    genererExercices('python');
+    chargerClassement();
+};
+
+// ── Changer langage ──
+function changerLangage(langage, btn) {
+    langageActuel = langage;
+    // Réinitialiser boutons
+    ['python','java','c'].forEach(function(l) {
+        var b = document.getElementById('btn-' + l);
+        b.style.borderColor = '#334155';
+        b.style.background = 'transparent';
+        b.style.color = '#94a3b8';
+    });
+    // Activer bouton sélectionné
+    btn.style.borderColor = '#00b894';
+    btn.style.background = 'rgba(0,184,148,0.1)';
+    btn.style.color = '#00b894';
+    // Générer nouveaux exercices
+    genererExercices(langage);
+}
+
+// ── Recharger exercices ──
+function rechargerExercices() {
+    genererExercices(langageActuel);
+}
+
+// ── Générer 6 exercices via IA ──
+function genererExercices(langage) {
+    var zone = document.getElementById('zone-exercices');
+    zone.innerHTML = '<div class="col-12" style="text-align:center;padding:40px;">'
+        + '<i class="bi bi-hourglass-split" style="font-size:24px;color:#3498db"></i>'
+        + '<div style="color:#94a3b8;margin-top:8px;">L\'IA génère vos exercices...</div></div>';
+
+    var params = new URLSearchParams();
+    params.append('niveau', niveauUser);
+    params.append('langage', langage);
+
+    fetch('/api/exercices/generer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.text(); })
+    .then(function(data) { afficherCartes(data, langage); })
+    .catch(function() {
+        zone.innerHTML = '<div class="col-12"><div class="carte-ia error">'
+            + '<div class="carte-ia-titre">❌ Erreur</div></div></div>';
+    });
+}
+
+// ── Afficher les 6 cartes exercices ──
+function afficherCartes(texte, langage) {
+    var zone = document.getElementById('zone-exercices');
+
+    // Extraire les exercices du texte IA
+    var parties = texte.split(/EXERCICE\s+\d+/i).filter(function(p) {
+        return p.trim().length > 10;
+    });
+
+    // S'assurer d'avoir 6 exercices (répéter si moins)
+    while (parties.length < 6) parties.push(parties[parties.length - 1] || texte);
+    parties = parties.slice(0, 6);
+
+    var html = '';
+    var couleurs = ['#00b894','#3498db','#9b59b6','#f39c12','#e74c3c','#00d2d3'];
+
+    for (var i = 0; i < 6; i++) {
+        var contenu = parties[i].trim();
+        // Extraire le titre (première ligne)
+        var lignes = contenu.split('\n');
+        var titre = lignes[0].replace(/[*:#]/g,'').trim() || ('Exercice ' + (i+1));
+        var description = lignes.slice(1).join('\n').trim().substring(0, 100) + '...';
+        var couleur = couleurs[i];
+        var exoSauve = contenu.replace(/'/g,"\\'").replace(/\n/g,"\\n").substring(0, 500);
+
+        html += '<div class="col-md-4 col-sm-6">'
+            + '<div style="background:#1e293b;border-radius:12px;padding:20px;height:100%;'
+            + 'display:flex;flex-direction:column;gap:10px;border:1px solid #334155;'
+            + 'transition:all 0.2s;cursor:pointer;"'
+            + 'onmouseover="this.style.borderColor=\'' + couleur + '\';this.style.transform=\'translateY(-2px)\'"'
+            + 'onmouseout="this.style.borderColor=\'#334155\';this.style.transform=\'translateY(0)\'">'
+
+            // Numéro
+            + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+            + '<span style="background:rgba(0,184,148,0.1);color:#00b894;padding:4px 10px;'
+            + 'border-radius:20px;font-size:12px;font-weight:600;">Exercice ' + (i+1) + '</span>'
+            + '<span style="color:#94a3b8;font-size:12px;">'
+            + '<i class="bi bi-code-slash"></i> ' + langage.toUpperCase() + '</span>'
+            + '</div>'
+
+            // Titre
+            + '<div style="font-weight:700;color:white;font-size:15px;">' + titre + '</div>'
+
+            // Description
+            + '<p style="color:#94a3b8;font-size:13px;line-height:1.6;flex:1;margin:0;">'
+            + description + '</p>'
+
+            // Bouton
+            + '<button onclick="ouvrirExercice(\'' + exoSauve + '\', \''
+            + titre.replace(/'/g,"\\'") + '\', \'' + langage + '\')" '
+            + 'style="background:transparent;color:' + couleur + ';'
+            + 'border:1px solid ' + couleur + ';padding:10px;border-radius:8px;'
+            + 'font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;"'
+            + 'onmouseover="this.style.background=\'' + couleur + '\';this.style.color=\'white\'"'
+            + 'onmouseout="this.style.background=\'transparent\';this.style.color=\'' + couleur + '\'">'
+            + '<i class="bi bi-play-fill"></i> Commencer</button>'
+
+            + '</div></div>';
+    }
+
+    zone.innerHTML = html;
+}
+
+// ── Ouvrir modal exercice ──
+function ouvrirExercice(enonce, titre, langage) {
+    exerciceEnCours = enonce;
+    langageActuel = langage;
+
+    document.getElementById('modal-titre').innerText = titre;
+    document.getElementById('modal-langage').innerText =
+        '📌 Niveau : ' + niveauUser + ' | 💻 Langage : ' + langage.toUpperCase();
+    document.getElementById('modal-enonce').innerText = enonce.replace(/\\n/g, '\n');
+    document.getElementById('modal-code').value = '';
+    document.getElementById('zone-correction').style.display = 'none';
+    document.getElementById('messages-questions').innerHTML = '';
+    document.getElementById('modal-exercice').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    // Démarrer le timer
+    tempsDebut = Date.now();
+    var secondes = 0;
+    clearInterval(intervalTimer);
+    intervalTimer = setInterval(function() {
+        secondes++;
+        var m = Math.floor(secondes / 60).toString().padStart(2, '0');
+        var s = (secondes % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = m + ':' + s;
+    }, 1000);
+}
+
+// ── Fermer modal ──
+function fermerModal() {
+    clearInterval(intervalTimer);
+    document.getElementById('modal-exercice').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// ── Corriger l'exercice ──
+function corrigerExercice() {
+    var reponse = document.getElementById('modal-code').value;
+    if (!reponse.trim()) {
+        alert('Écrivez votre solution d\'abord !');
+        return;
+    }
+
+    // Arrêter le timer
+    clearInterval(intervalTimer);
+    var tempsSecondes = Math.floor((Date.now() - tempsDebut) / 1000);
+
+    var zone = document.getElementById('zone-correction');
+    var contenu = document.getElementById('contenu-correction');
+    zone.style.display = 'block';
+    contenu.innerHTML = '<div class="carte-ia info">'
+        + '<div class="carte-ia-titre">⏳ Correction en cours...</div></div>';
+
+    document.getElementById('btn-corriger').disabled = true;
+
+    var params = new URLSearchParams();
+    params.append('exercice', exerciceEnCours.replace(/\\n/g, '\n'));
+    params.append('reponse', reponse);
+    params.append('niveau', niveauUser);
+    params.append('langage', langageActuel);
+    params.append('tempsSecondes', tempsSecondes);
+	params.append('titreExercice', document.getElementById('modal-titre').innerText);
+
+    fetch('/api/exercices/corriger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        // Afficher correction
+        var type = data.correction.toUpperCase().includes('INCORRECTE') ? 'error'
+                 : data.correction.toUpperCase().includes('PARTIELLE') ? 'warning' : 'success';
+
+        contenu.innerHTML = '<div class="carte-ia ' + type + '">'
+            + '<div class="carte-ia-titre">'
+            + (type==='success'?'✅':type==='error'?'❌':'⚠️') + ' Correction</div>'
+            + '<div class="carte-ia-desc" style="white-space:pre-wrap">'
+            + data.correction + '</div></div>';
+
+        // Afficher stats
+        var minutes = Math.floor(tempsSecondes / 60);
+        var secondes = tempsSecondes % 60;
+        document.getElementById('stat-temps').innerText =
+            minutes + 'min ' + secondes + 's';
+        document.getElementById('stat-points').innerText =
+            '+' + data.pointsGagnes + ' pts';
+
+        // Complexité (extraire du texte de correction)
+        var complexite = 'O(n)';
+        if (data.correction.includes('O(1)')) complexite = 'O(1)';
+        else if (data.correction.includes('O(n²)') || data.correction.includes('O(n^2)')) complexite = 'O(n²)';
+        else if (data.correction.includes('O(log n)')) complexite = 'O(log n)';
+        else if (data.correction.includes('O(n log n)')) complexite = 'O(n log n)';
+        document.getElementById('stat-complexite').innerText = complexite;
+        document.getElementById('stats-exercice').style.display = 'block';
+
+        // Mettre à jour compteurs
+        pointsUser = data.totalPoints;
+        exoCompletes = data.exercicesCompletes;
+        document.getElementById('total-points').innerText = pointsUser;
+        document.getElementById('exo-count').innerText = exoCompletes;
+        document.getElementById('prog-count').innerText = exoCompletes;
+        document.getElementById('barre-prog').style.width = (exoCompletes * 5) + '%';
+
+        // Si test disponible → recharger la page
+        if (data.testDisponible && exoCompletes >= 20) {
+            setTimeout(function() { location.reload(); }, 2000);
         }
 
-        function filtrer(niveau, bouton) {
-            var boutons = document.querySelectorAll(".btn-filtre");
-            for (var i = 0; i < boutons.length; i++) {
-                boutons[i].classList.remove("actif");
-            }
-            bouton.classList.add("actif");
+        // Recharger classement
+        chargerClassement();
+    })
+    .catch(function() {
+        contenu.innerHTML = '<div class="carte-ia error">'
+            + '<div class="carte-ia-titre">❌ Erreur</div></div>';
+    });
+}
 
-            if (niveau === "tous") {
-                afficherExercices(exercices);
-            } else {
-                var filtre = exercices.filter(function(ex) {
-                    return ex.niveau === niveau;
-                });
-                afficherExercices(filtre);
-            }
+// ── Poser une question après correction ──
+function poserQuestion() {
+    var question = document.getElementById('question-input').value.trim();
+    if (!question) return;
+
+    document.getElementById('question-input').value = '';
+    var zone = document.getElementById('messages-questions');
+
+    // Message utilisateur
+    zone.innerHTML += '<div class="carte-ia user" style="margin-bottom:6px;">'
+        + '<div class="carte-ia-titre"><i class="bi bi-person"></i> Vous</div>'
+        + '<div class="carte-ia-desc">' + question + '</div></div>';
+
+    // Message attente
+    var idAttente = 'q-' + Date.now();
+    zone.innerHTML += '<div id="' + idAttente + '" class="carte-ia info" style="margin-bottom:6px;">'
+        + '<div class="carte-ia-titre">⏳ IA réfléchit...</div></div>';
+    zone.scrollTop = zone.scrollHeight;
+
+    var contexte = 'Exercice : ' + exerciceEnCours.replace(/\\n/g, '\n')
+                 + '\n\nQuestion : ' + question;
+
+    var params = new URLSearchParams();
+    params.append('code', contexte);
+    params.append('niveau', niveauUser);
+    params.append('langage', langageActuel);
+
+    fetch('/api/ai/analyser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.text(); })
+    .then(function(data) {
+        var msg = document.getElementById(idAttente);
+        msg.className = 'carte-ia success';
+        msg.innerHTML = '<div class="carte-ia-titre">'
+            + '<i class="bi bi-robot"></i> Assistant</div>'
+            + '<div class="carte-ia-desc" style="white-space:pre-wrap">' + data + '</div>';
+    })
+    .catch(function() {
+        document.getElementById(idAttente).className = 'carte-ia error';
+        document.getElementById(idAttente).innerHTML =
+            '<div class="carte-ia-titre">❌ Erreur</div>';
+    });
+}
+
+// ── Charger classement ──
+function chargerClassement() {
+    fetch('/api/classement?niveau=' + niveauUser)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        var zone = document.getElementById('zone-classement');
+        if (!data || data.length === 0) {
+            zone.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:13px;">'
+                + 'Aucun utilisateur pour ce niveau.</div>';
+            return;
         }
 
-        afficherExercices(exercices);
-    </script>
+        var html = '<div style="font-weight:700;color:white;margin-bottom:16px;font-size:15px;">'
+            + '<i class="bi bi-trophy" style="color:#f39c12"></i>'
+            + ' Classement — Niveau ' + niveauUser + '</div>'
+            + '<table style="width:100%;border-collapse:collapse;">'
+            + '<thead><tr>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">#</th>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">Nom</th>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">Points</th>'
+            + '<th style="color:#94a3b8;font-size:11px;font-weight:600;'
+            + 'padding:8px 0;border-bottom:1px solid #334155;">Exercices</th>'
+            + '</tr></thead><tbody>';
+
+        var medailles = ['🥇','🥈','🥉'];
+
+        for (var i = 0; i < data.length; i++) {
+            var u = data[i];
+            var estMoi = u.username === /*[[${username}]]*/ '';
+            var style = estMoi
+                ? 'background:rgba(0,184,148,0.1);'
+                : (i < 3 ? 'background:rgba(243,156,18,0.05);' : '');
+
+            html += '<tr style="' + style + '">'
+                + '<td style="padding:10px 6px;font-size:14px;border-bottom:1px solid rgba(45,51,59,0.5);">'
+                + (i < 3 ? medailles[i] : (i+1)) + '</td>'
+                + '<td style="padding:10px 6px;font-size:13px;border-bottom:1px solid rgba(45,51,59,0.5);'
+                + 'color:' + (estMoi ? '#00b894' : 'white') + ';font-weight:' + (estMoi?'700':'400') + ';">'
+                + u.username + (estMoi ? ' (vous)' : '') + '</td>'
+                + '<td style="padding:10px 6px;font-size:13px;font-weight:700;color:#00b894;'
+                + 'border-bottom:1px solid rgba(45,51,59,0.5);">' + u.points + ' pts</td>'
+                + '<td style="padding:10px 6px;font-size:13px;color:#94a3b8;'
+                + 'border-bottom:1px solid rgba(45,51,59,0.5);">' + u.exercicesCompletes + '</td>'
+                + '</tr>';
+        }
+
+        html += '</tbody></table>';
+        zone.innerHTML = html;
+    })
+    .catch(function() {
+        document.getElementById('zone-classement').innerHTML =
+            '<div style="color:#94a3b8;font-size:13px;text-align:center;">Erreur classement</div>';
+    });
+}
+
+// ── Ouvrir le test ──
+function ouvrirTest() {
+    document.getElementById('modal-test').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('contenu-test').innerHTML =
+        '<div class="carte-ia info" style="text-align:center;padding:20px;">'
+        + '<div class="carte-ia-titre" style="justify-content:center;">⏳ Génération du test...</div></div>';
+    document.getElementById('resultat-test').innerHTML = '';
+    document.getElementById('reponses-test').value = '';
+
+    var params = new URLSearchParams();
+    params.append('niveau', niveauUser);
+    params.append('langage', langageActuel);
+
+    fetch('/api/exercices/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.erreur) {
+            document.getElementById('contenu-test').innerHTML =
+                '<div class="carte-ia error">'
+                + '<div class="carte-ia-titre">❌ ' + data.message + '</div></div>';
+            return;
+        }
+        testEnCours = data.test;
+        dureeTestSecondes = (data.dureeMinutes || 30) * 60;
+
+        document.getElementById('contenu-test').innerHTML =
+            '<div class="carte-ia conseil">'
+            + '<div class="carte-ia-titre">'
+            + '<i class="bi bi-clipboard-check"></i> Test — Niveau ' + niveauUser + '</div>'
+            + '<div class="carte-ia-desc" style="white-space:pre-wrap">'
+            + data.test + '</div></div>';
+
+        // Démarrer compte à rebours du test
+        var restant = dureeTestSecondes;
+        clearInterval(intervalTest);
+        intervalTest = setInterval(function() {
+            restant--;
+            var m = Math.floor(restant / 60).toString().padStart(2,'0');
+            var s = (restant % 60).toString().padStart(2,'0');
+            document.getElementById('timer-test').innerText = m + ':' + s;
+
+            // Changer couleur si moins de 5 minutes
+            if (restant <= 300) {
+                document.getElementById('timer-test').style.color = '#e74c3c';
+            }
+
+            // Temps écoulé → soumettre automatiquement
+            if (restant <= 0) {
+                clearInterval(intervalTest);
+                soumettreTest(true);
+            }
+        }, 1000);
+    });
+}
+
+// ── Soumettre le test ──
+function soumettreTest(tempsEcoule) {
+    clearInterval(intervalTest);
+    var reponse = document.getElementById('reponses-test').value;
+    var zone = document.getElementById('resultat-test');
+
+    if (!tempsEcoule && !reponse.trim()) {
+        alert('Écrivez vos réponses !');
+        return;
+    }
+
+    zone.innerHTML = '<div class="carte-ia info" style="text-align:center;padding:20px;">'
+        + '<div class="carte-ia-titre" style="justify-content:center;">'
+        + '⏳ Évaluation en cours...</div></div>';
+
+    var params = new URLSearchParams();
+    params.append('test', testEnCours);
+    params.append('reponse', tempsEcoule ? '(temps écoulé)' : reponse);
+    params.append('niveau', niveauUser);
+    params.append('tempsEcoule', tempsEcoule);
+
+    fetch('/api/exercices/evaluer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.reussi) {
+            zone.innerHTML = '<div class="carte-ia success" style="text-align:center;padding:24px;">'
+                + '<div style="font-size:40px;margin-bottom:12px;">🎉</div>'
+                + '<div class="carte-ia-titre" style="justify-content:center;font-size:18px;">'
+                + '✅ Test réussi !</div>'
+                + '<div class="carte-ia-desc" style="margin-top:8px;">'
+                + '🚀 Nouveau niveau : <strong>' + data.nouveauNiveau + '</strong></div>'
+                + '<div style="white-space:pre-wrap;margin-top:12px;text-align:left;">'
+                + data.evaluation + '</div>'
+                + '<button onclick="location.href=\'/exercices\'" style="margin-top:16px;'
+                + 'background:#00b894;color:white;border:none;padding:10px 24px;'
+                + 'border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">'
+                + '🔄 Mes nouveaux exercices</button></div>';
+        } else {
+            zone.innerHTML = '<div class="carte-ia error" style="text-align:center;padding:24px;">'
+                + '<div style="font-size:40px;margin-bottom:12px;">'
+                + (tempsEcoule ? '⏰' : '💪') + '</div>'
+                + '<div class="carte-ia-titre" style="justify-content:center;font-size:16px;">'
+                + (tempsEcoule ? '⏰ Temps écoulé !' : '❌ Pas encore...') + '</div>'
+                + '<div class="carte-ia-desc" style="margin-top:8px;">'
+                + 'Complétez 20 nouveaux exercices pour retenter le test.</div>'
+                + '<div style="white-space:pre-wrap;margin-top:12px;text-align:left;">'
+                + data.evaluation + '</div>'
+                + '<button onclick="document.getElementById(\'modal-test\').style.display=\'none\';'
+                + 'document.body.style.overflow=\'\'" style="margin-top:16px;'
+                + 'background:#334155;color:white;border:none;padding:10px 24px;'
+                + 'border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">'
+                + '📚 Continuer à pratiquer</button></div>';
+        }
+    });
+}
+</script>
 </body>
 </html>

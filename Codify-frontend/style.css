@@ -1,11 +1,3 @@
-/* ============================
-   Codify - Fichier CSS unique
-   Toutes les pages
-   ============================ */
-
-/* ================================
-   VARIABLES & BASE
-   ================================ */
 :root {
     --vert: #00b894;
     --vert-fonce: #00a381;
@@ -15,6 +7,36 @@
     --texte: #e6edf3;
     --texte-gris: #8b949e;
     --bordure: #2d333b;
+}
+
+/* ---- Mode clair ---- */
+body.mode-clair {
+    --fond-sombre: #f5f7fa;
+    --fond-carte: #ffffff;
+    --fond-secondaire: #eef1f6;
+    --texte: #1a1d2e;
+    --texte-gris: #5a6270;
+    --bordure: #d5dbe3;
+}
+
+/* --- Bouton toggle thème --- */
+.btn-theme {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--bordure);
+    background: var(--fond-secondaire);
+    color: var(--texte-gris);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+.btn-theme:hover {
+    border-color: var(--vert);
+    color: var(--vert);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1318,4 +1340,281 @@ a { text-decoration: none; }
     .grille-fonctionnalites { grid-template-columns: 1fr; }
     .barre-progression { display: none; }
     .liens-nav-desktop { display: none !important; }
+}
+/* ── Page Auth ── */
+.page-auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+    padding: 20px;
+}
+.carte-auth {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.logo-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+.logo-auth .icone-logo {
+    width: 40px;
+    height: 40px;
+    background: #00b894;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+}
+.logo-auth span {
+    font-size: 22px;
+    font-weight: 700;
+    color: #00b894;
+}
+.onglets-auth {
+    display: flex;
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+.onglet-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.onglet-btn.actif {
+    background: #00b894;
+    color: white;
+}
+.formulaire-section { display: none; }
+.formulaire-section.actif { display: block; }
+.niveaux-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.niveau-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.niveau-option:hover { border-color: #00b894; }
+.niveau-option.selectionne { border-color: #00b894; background: #042f2e; }
+.niveau-option input[type="radio"] { display: none; }
+.emoji-niveau { font-size: 20px; }
+.nom-niveau { font-size: 14px; font-weight: 600; color: white; }
+.desc-niveau-petit { font-size: 12px; color: #94a3b8; }
+.retour-lien {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+.retour-lien:hover { color: #00b894; }
+.champ-password { position: relative; }
+.champ-password .champ-input { padding-right: 40px; }
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* ── Panneau IA Onglets ── */
+.onglets-ia {
+    display: flex;
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 12px;
+    gap: 2px;
+}
+.onglet-ia-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.onglet-ia-btn.actif {
+    background: #1e293b;
+    color: #00b894;
+}
+.section-ia { display: none; flex-direction: column; flex: 1; overflow-y: auto; }
+.section-ia.actif { display: flex; }
+.carte-erreur {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #e74c3c;
+}
+.carte-erreur.warning { border-left-color: #f39c12; }
+.carte-erreur.info { border-left-color: #3498db; }
+.carte-erreur.success { border-left-color: #00b894; }
+.erreur-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.erreur-ligne { font-size: 12px; font-weight: 700; color: #e74c3c; }
+.erreur-ligne.warning { color: #f39c12; }
+.erreur-ligne.info { color: #3498db; }
+.erreur-ligne.success { color: #00b894; }
+.erreur-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(231,76,60,0.2);
+    color: #e74c3c;
+    font-weight: 600;
+}
+.erreur-badge.warning { background: rgba(243,156,18,0.2); color: #f39c12; }
+.erreur-badge.info { background: rgba(52,152,219,0.2); color: #3498db; }
+.erreur-titre { font-size: 13px; color: white; font-weight: 600; margin-bottom: 3px; }
+.erreur-conseil { font-size: 12px; color: #94a3b8; }
+.badge-niveau-ia {
+    background: rgba(0,184,148,0.15);
+    color: #00b894;
+    border: 1px solid rgba(0,184,148,0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.titre-ia-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.titre-ia-gauche {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+}
+.questions-suggerees { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.question-suggeree {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.question-suggeree:hover { border-color: #00b894; color: white; }
+.zone-ia {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+}
+.contenu-ia { flex: 1; overflow-y: auto; min-height: 0; }
+/* ── Cartes IA colorées ── */
+.carte-ia {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-left: 4px solid #334155;
+    background: #0f172a;
+}
+.carte-ia.error {
+    border-left-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.08);
+}
+.carte-ia.success {
+    border-left-color: #00b894;
+    background: rgba(0, 184, 148, 0.08);
+}
+.carte-ia.info {
+    border-left-color: #3498db;
+    background: rgba(52, 152, 219, 0.08);
+}
+.carte-ia.warning {
+    border-left-color: #f39c12;
+    background: rgba(243, 156, 18, 0.08);
+}
+.carte-ia.optimise {
+    border-left-color: #9b59b6;
+    background: rgba(155, 89, 182, 0.08);
+}
+.carte-ia.conseil {
+    border-left-color: #f39c12;
+    background: rgba(243, 156, 18, 0.08);
+}
+.carte-ia.user {
+    border-left-color: #00b894;
+    background: rgba(0, 184, 148, 0.12);
+}
+.carte-ia-titre {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.carte-ia.error .carte-ia-titre { color: rgb(255, 0, 0); }
+.carte-ia.success .carte-ia-titre { color: #00b894; }
+.carte-ia.info .carte-ia-titre { color: #3498db; }
+.carte-ia.warning .carte-ia-titre { color: rgb(255, 255, 0); }
+.carte-ia.optimise .carte-ia-titre { color: #9b59b6; }
+.carte-ia.conseil .carte-ia-titre { color: #f39c12; }
+.carte-ia.user .carte-ia-titre { color: rgb(255, 128, 192); }
+.carte-ia-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
 }
