@@ -32,13 +32,12 @@ Codify permet d'analyser, corriger, optimiser, transformer et comparer du code s
 
 1. [Pourquoi Codify](#pourquoi-codify)
 2. [Fonctionnalités](#fonctionnalités)
-3. [Aperçu](#aperçu)
-4. [Technologies](#technologies)
-5. [Architecture](#architecture)
-6. [Utilisation](#utilisation)
-7. [Méthodologie](#méthodologie)
-8. [Limites actuelles et perspectives](#limites-actuelles-et-perspectives)
-9. [Auteure](#auteure)
+3. [Technologies](#technologies)
+4. [Architecture](#architecture)
+5. [Utilisation](#utilisation)
+6. [Méthodologie](#méthodologie)
+7. [Limites actuelles et perspectives](#limites-actuelles-et-perspectives)
+8. [Auteure](#auteure)
 
 ---
 
@@ -93,20 +92,6 @@ Apprendre à programmer est difficile quand on ne comprend pas ses erreurs. Les 
 ### Administration
 - Espace administrateur sécurisé par session côté serveur.
 - Consultation des trois classements (Débutant, Intermédiaire, Avancé), du bilan des hackathons et gestion des comptes utilisateurs.
-
----
-
-## Aperçu
-
-<!-- Ajoute tes captures d'écran dans docs/images/ avec ces noms, ou adapte les chemins. -->
-
-| Page d'accueil | Éditeur et assistant IA |
-|:---:|:---:|
-| ![Accueil](docs/images/accueil.png) | ![Éditeur](docs/images/editeur-ia.png) |
-
-| Exercices | Hackathon en temps réel |
-|:---:|:---:|
-| ![Exercices](docs/images/exercices.png) | ![Hackathon](docs/images/hackathon.png) |
 
 ---
 
@@ -187,6 +172,7 @@ Le rapport complet (analyse des besoins, diagrammes UML de cas d'utilisation, de
 
 **Ibtihel Gritli**, étudiante en Licence GLSI à la Faculté des Sciences de Monastir.
 
+- Portfolio : [ibtihel-gritli.github.io/Ibtihel-Gritl](https://ibtihel-gritli.github.io/Ibtihel-Gritl/)
 - GitHub : [Ibtihel-Gritli](https://github.com/Ibtihel-Gritli)
 - LinkedIn : [ibtihelle-gritli](https://www.linkedin.com/in/ibtihelle-gritli)
 - Email : ibtihellegritli@gmail.com
