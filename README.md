@@ -1,8 +1,21 @@
-# Codify
+# Codify (Version 0)
 
-**Application web intelligente et assistant IA pédagogique pour apprendre la programmation.**
+**Application web intelligente d'apprentissage de la programmation, assistée par intelligence artificielle.**
 
-Codify aide les apprenants à comprendre leurs erreurs, à améliorer leur code et à progresser à leur rythme. Une IA analyse le code, explique les erreurs selon le niveau de l'utilisateur, propose une version corrigée et optimisée, puis motive l'apprenant avec des exercices, un classement et des hackathons en temps réel.
+> **Statut :** Version 0, en cours d'amélioration.
+
+Codify permet d'analyser, corriger, optimiser, transformer et comparer du code source, avec des explications pédagogiques adaptées au niveau de chaque utilisateur. Un assistant IA interactif (chatbot) accompagne l'apprenant pour comprendre son code, identifier ses erreurs et améliorer ses solutions.
+
+**Objectif :** offrir un environnement interactif où l'on apprend, on comprend ses erreurs et on progresse efficacement en programmation.
+
+**Fonctionnalités principales**
+- Éditeur de code multi-langages avec exécution.
+- Analyse intelligente du code, avec correction et optimisation.
+- Transformation et comparaison entre différents langages de programmation.
+- Exercices personnalisés selon le niveau de l'utilisateur.
+- Défis et hackathons chronométrés.
+- Système de points, classement et progression.
+- Explications détaillées pour développer la logique algorithmique.
 
 > Projet de fin d'année (PFA), Licence en Génie Logiciel et Systèmes d'Information (GLSI), Faculté des Sciences de Monastir (FSM), année universitaire 2025-2026.
 > Encadrant : M. Mahmoud Adnen.
@@ -22,11 +35,10 @@ Codify aide les apprenants à comprendre leurs erreurs, à améliorer leur code 
 3. [Aperçu](#aperçu)
 4. [Technologies](#technologies)
 5. [Architecture](#architecture)
-6. [Installation](#installation)
-7. [Utilisation](#utilisation)
-8. [Méthodologie](#méthodologie)
-9. [Limites actuelles et perspectives](#limites-actuelles-et-perspectives)
-10. [Auteure](#auteure)
+6. [Utilisation](#utilisation)
+7. [Méthodologie](#méthodologie)
+8. [Limites actuelles et perspectives](#limites-actuelles-et-perspectives)
+9. [Auteure](#auteure)
 
 ---
 
@@ -130,49 +142,6 @@ Navigateur  ──HTTP / WebSocket──▶  Serveur Spring Boot (port 9090)  �
 ### Base de données
 Trois tables : `users`, `historique_exercices` et `defis`.
 Un utilisateur possède zéro ou plusieurs entrées d'historique (supprimées avec lui). Un hackathon (`Defi`) implique un ou deux utilisateurs.
-
----
-
-## Installation
-
-### Prérequis
-- Java 17
-- Maven
-- MySQL 8.0
-- Une clé API [Groq](https://console.groq.com/)
-
-### Étapes
-
-1. **Cloner le dépôt**
-   ```bash
-   git clone https://github.com/Ibtihel-Gritli/Codify.git
-   cd Codify
-   ```
-
-2. **Créer la base de données**
-   ```sql
-   CREATE DATABASE codify_db;
-   ```
-
-3. **Configurer l'application** dans `src/main/resources/application.properties` :
-   ```properties
-   server.port=9090
-
-   spring.datasource.url=jdbc:mysql://localhost:3306/codify_db
-   spring.datasource.username=VOTRE_UTILISATEUR
-   spring.datasource.password=VOTRE_MOT_DE_PASSE
-   spring.jpa.hibernate.ddl-auto=update
-
-   groq.api.key=VOTRE_CLE_API_GROQ
-   ```
-   > Ne publie jamais ta clé API ni tes mots de passe sur GitHub. Utilise des variables d'environnement ou un fichier de configuration ignoré par Git.
-
-4. **Lancer l'application**
-   ```bash
-   mvn spring-boot:run
-   ```
-
-5. **Ouvrir** [http://localhost:9090](http://localhost:9090)
 
 ---
 
