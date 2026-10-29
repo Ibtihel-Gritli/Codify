@@ -1,15 +1,223 @@
-#Codify (Version 0) est une application web intelligente d’apprentissage de la programmation assistée par intelligence artificielle, actuellement en cours d’amélioration. Elle permet l’analyse, la correction des erreurs, l’optimisation, la transformation et la comparaison de code source avec des explications pédagogiques adaptées au niveau de chaque utilisateur.
+# Codify
 
-La plateforme intègre également un assistant IA interactif (chatbot) capable d’accompagner l’utilisateur dans la compréhension du code, l’identification des erreurs et l’amélioration des solutions proposées.
+**Application web intelligente et assistant IA pédagogique pour apprendre la programmation.**
 
-Parmi ses fonctionnalités principales, Codify propose :
+Codify aide les apprenants à comprendre leurs erreurs, à améliorer leur code et à progresser à leur rythme. Une IA analyse le code, explique les erreurs selon le niveau de l'utilisateur, propose une version corrigée et optimisée, puis motive l'apprenant avec des exercices, un classement et des hackathons en temps réel.
 
-un éditeur de code multi-langages avec exécution ;
-une analyse intelligente du code avec correction et optimisation ;
-la transformation et comparaison entre différents langages de programmation ;
-des exercices personnalisés selon le niveau de l’utilisateur ;
-des défis et hackathons chronométrés ;
-un système de points, classement et progression ;
-des explications détaillées pour développer la logique algorithmique et améliorer les compétences en programmation.
+> Projet de fin d'année (PFA), Licence en Génie Logiciel et Systèmes d'Information (GLSI), Faculté des Sciences de Monastir (FSM), année universitaire 2025-2026.
+> Encadrant : M. Mahmoud Adnen.
 
-Objectif : offrir un environnement interactif permettant aux utilisateurs d’apprendre, comprendre leurs erreurs et progresser efficacement en programmation.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3)
+![Groq](https://img.shields.io/badge/IA-Groq%20%7C%20Llama%203.3%2070B-black)
+
+---
+
+## Table des matières
+
+1. [Pourquoi Codify](#pourquoi-codify)
+2. [Fonctionnalités](#fonctionnalités)
+3. [Aperçu](#aperçu)
+4. [Technologies](#technologies)
+5. [Architecture](#architecture)
+6. [Installation](#installation)
+7. [Utilisation](#utilisation)
+8. [Méthodologie](#méthodologie)
+9. [Limites actuelles et perspectives](#limites-actuelles-et-perspectives)
+10. [Auteure](#auteure)
+
+---
+
+## Pourquoi Codify
+
+Apprendre à programmer est difficile quand on ne comprend pas ses erreurs. Les plateformes comme LeetCode ou HackerRank répondent seulement « réussi » ou « échoué », sans expliquer pourquoi. Codify répond à ce manque.
+
+| Fonctionnalité | LeetCode | HackerRank | Codify |
+|---|:---:|:---:|:---:|
+| Exécution de code dans le navigateur | Limitée | Limitée | Oui |
+| Correction des erreurs par IA | Non | Non | Oui |
+| Explications adaptées au niveau | Non | Non | Oui (3 niveaux) |
+| Transformation de code entre langages | Non | Non | Oui (Python, Java, C) |
+| Exercices personnalisés par niveau | Oui | Oui | Oui, générés par IA |
+| Classement et gamification | Oui | Oui | Oui, avec récompenses |
+| Défis à deux joueurs | Non | Limité | Oui, en temps réel |
+| Recommandation de langage par IA | Non | Non | Oui |
+
+---
+
+## Fonctionnalités
+
+### Comptes et niveaux
+- Inscription et connexion, avec choix du niveau : **Débutant**, **Intermédiaire** ou **Avancé**.
+- Tout le contenu (explications de l'IA, exercices, tests) s'adapte au niveau choisi.
+- Tableau de bord personnel : points, niveau, exercices complétés, classement et historique détaillé (titre, niveau, points, temps, complexité, résultat).
+
+### Éditeur de code
+- Éditeur intégré avec trois langages : **Python**, **Java** et **C**.
+- Terminal de résultat intégré.
+- Analyse automatique du code après chaque exécution.
+
+### Assistant IA pédagogique
+- **Analyse** en 5 sections : explication du code, erreurs détectées (avec numéro de ligne), code corrigé commenté, méthode alternative, conseils personnalisés.
+- **Optimisation** : une version plus efficace du code, avec explications.
+- **Transformation** de code d'un langage à un autre, avec les différences de syntaxe, de logique et de performance.
+- **Chat IA** pour poser des questions libres sur son code.
+
+### Exercices et progression
+- Génération de 6 exercices adaptés au niveau et au langage choisis.
+- Chronomètre pour chaque exercice et extraction de la complexité algorithmique de la solution.
+- Points selon la qualité de la solution : complète, partielle (moitié des points) ou incorrecte (0 point). Un bonus de rapidité multiplie les points par 1,5.
+- **Test de validation** après 20 exercices : 5 questions chronométrées (30, 20 ou 15 minutes selon le niveau). Avec 4 bonnes réponses sur 5, l'utilisateur passe au niveau supérieur.
+
+### Hackathons en temps réel
+- Deux joueurs s'affrontent sur le même problème algorithmique généré par l'IA.
+- Communication instantanée avec **WebSocket (STOMP sur SockJS)**.
+- Chronomètres synchronisés grâce à un horodatage unique fourni par le serveur.
+- Scores de l'adversaire visibles en direct.
+- Évaluation comparative des deux solutions par l'IA (complexité, optimisation, lisibilité). Le gagnant reçoit 50 points.
+
+### Administration
+- Espace administrateur sécurisé par session côté serveur.
+- Consultation des trois classements (Débutant, Intermédiaire, Avancé), du bilan des hackathons et gestion des comptes utilisateurs.
+
+---
+
+## Aperçu
+
+<!-- Ajoute tes captures d'écran dans docs/images/ avec ces noms, ou adapte les chemins. -->
+
+| Page d'accueil | Éditeur et assistant IA |
+|:---:|:---:|
+| ![Accueil](docs/images/accueil.png) | ![Éditeur](docs/images/editeur-ia.png) |
+
+| Exercices | Hackathon en temps réel |
+|:---:|:---:|
+| ![Exercices](docs/images/exercices.png) | ![Hackathon](docs/images/hackathon.png) |
+
+---
+
+## Technologies
+
+| Couche | Technologie | Rôle |
+|---|---|---|
+| Backend | Java 17, Spring Boot 3.2.0 | Routes HTTP, sessions, logique métier |
+| Accès aux données | Spring Data JPA | Communication avec MySQL |
+| Temps réel | Spring WebSocket | Hackathons (STOMP sur SockJS) |
+| Frontend | Thymeleaf, Bootstrap 5.3.0, JavaScript (ES6) | Pages et interactions |
+| Base de données | MySQL 8.0 | Utilisateurs, historique, hackathons |
+| Intelligence artificielle | API Groq (`llama-3.3-70b-versatile`) | Analyse, correction, optimisation, transformation, exercices |
+
+**Outils de développement :** GitHub, Spring Tools Suite 4, MySQL Workbench, Postman.
+
+---
+
+## Architecture
+
+### Architecture logique (MVC)
+- **Modèle** : entités JPA (`User`, `HistoriqueExercice`, `Defi`), services métier et repositories.
+- **Vue** : pages Thymeleaf et Bootstrap, et code JavaScript pour les interactions et les appels aux API.
+- **Contrôleur** : contrôleurs Spring Boot qui renvoient des pages HTML ou du JSON (API REST).
+
+### Architecture physique (3 tiers)
+```
+Navigateur  ──HTTP / WebSocket──▶  Serveur Spring Boot (port 9090)  ──JPA──▶  MySQL (codify_db)
+                                            │
+                                            └──HTTPS──▶  API Groq (IA)
+```
+
+### Base de données
+Trois tables : `users`, `historique_exercices` et `defis`.
+Un utilisateur possède zéro ou plusieurs entrées d'historique (supprimées avec lui). Un hackathon (`Defi`) implique un ou deux utilisateurs.
+
+---
+
+## Installation
+
+### Prérequis
+- Java 17
+- Maven
+- MySQL 8.0
+- Une clé API [Groq](https://console.groq.com/)
+
+### Étapes
+
+1. **Cloner le dépôt**
+   ```bash
+   git clone https://github.com/Ibtihel-Gritli/Codify.git
+   cd Codify
+   ```
+
+2. **Créer la base de données**
+   ```sql
+   CREATE DATABASE codify_db;
+   ```
+
+3. **Configurer l'application** dans `src/main/resources/application.properties` :
+   ```properties
+   server.port=9090
+
+   spring.datasource.url=jdbc:mysql://localhost:3306/codify_db
+   spring.datasource.username=VOTRE_UTILISATEUR
+   spring.datasource.password=VOTRE_MOT_DE_PASSE
+   spring.jpa.hibernate.ddl-auto=update
+
+   groq.api.key=VOTRE_CLE_API_GROQ
+   ```
+   > Ne publie jamais ta clé API ni tes mots de passe sur GitHub. Utilise des variables d'environnement ou un fichier de configuration ignoré par Git.
+
+4. **Lancer l'application**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+5. **Ouvrir** [http://localhost:9090](http://localhost:9090)
+
+---
+
+## Utilisation
+
+1. Créez un compte et choisissez votre niveau.
+2. Ouvrez l'éditeur, choisissez un langage, écrivez votre code et cliquez sur **Exécuter**. L'assistant IA analyse le code et affiche ses conseils.
+3. Utilisez **Transformer** pour convertir votre code vers un autre langage, ou le **chat** pour poser une question.
+4. Allez dans **Exercices** pour générer une série de 6 exercices et gagner des points.
+5. Après 20 exercices, passez le **test de niveau** pour monter de niveau.
+6. Dans **Défis**, créez ou rejoignez un hackathon pour affronter un autre utilisateur.
+
+---
+
+## Méthodologie
+
+Le projet suit le framework **Scrum**, avec un seul développeur qui tient les deux rôles (Scrum Master et équipe de développement). Il comprend **21 user stories**, réparties en **5 sprints** et **3 releases**.
+
+| Release | Sprints | Contenu |
+|---|---|---|
+| Release 1 | Sprint 1 et 2 | Gestion des utilisateurs, authentification, éditeur de code et exécution |
+| Release 2 | Sprint 3 et 4 | Analyse IA et correction, transformation de code et chat IA |
+| Release 3 | Sprint 5 | Exercices, test de niveau, hackathons, gamification et panneau administrateur |
+
+Le rapport complet (analyse des besoins, diagrammes UML de cas d'utilisation, de classes et de séquence, interfaces) est disponible dans le dossier `docs/`.
+
+---
+
+## Limites actuelles et perspectives
+
+**Limite connue :** pour Java et C, la compilation est **simulée**. Seul le code Python est exécuté ligne par ligne.
+
+**Pistes d'amélioration :**
+- Intégrer un vrai compilateur en ligne (API Judge0).
+- Développer une application mobile (React Native).
+- Ajouter un système de badges et de récompenses.
+- Proposer un mode équipe pour les hackathons.
+- Prendre en charge d'autres langages (C++, JavaScript, PHP).
+
+---
+
+## Auteure
+
+**Ibtihel Gritli**, étudiante en Licence GLSI à la Faculté des Sciences de Monastir.
+
+- GitHub : [Ibtihel-Gritli](https://github.com/Ibtihel-Gritli)
+- LinkedIn : [ibtihelle-gritli](https://www.linkedin.com/in/ibtihelle-gritli)
+- Email : ibtihellegritli@gmail.com
